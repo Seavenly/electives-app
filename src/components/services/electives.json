@@ -1,0 +1,43 @@
+Electives Data Structure
+{
+  "_id": "String",
+  "name": "String",
+  "description": "String",
+  "semester": "Boolean",
+  "grades": ["Number"],
+  "cap": "Number",
+  "quarters": {
+    "avail": ["Number"],
+    "q": [{
+      "current": "Number",
+      "grade7": "Number",
+      "grade8": "Number"
+      }]
+  },
+  "students": ["_id"],
+  "image": "String"
+}
+
+Users Data Structure
+{
+  "_id": "String",
+  "name": {
+    "first": "String",
+    "last": "String"
+  },
+  "pass": {
+    "student": "String",
+    "parent": "String"
+  },
+  "username": "String",
+  "grade": "Number",
+  "spanish": "Boolean",
+  "submit": "Date",
+  "list": {
+    "q1": ["_id"],
+    "q2": ["_id"],
+    "q3": ["_id"],
+    "q4": ["_id"]
+  },
+  "electives": ["_id"]
+}

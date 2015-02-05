@@ -1,0 +1,66 @@
+<div class="container">
+
+  <div class="row">
+    <div class="col-xs-12">
+      <form ng-submit="vm.addAllStudents()" class="form-inline">
+        <div class="form-group">
+          <label for="addStudents">Add Students</label>
+          <input type="file" id="addStudents" ng-file-select ng-model="vm.studentsFile">
+          <p class="help-block">Select CVS file with students to add.</p>
+        </div>
+        <button type="submtit" class="btn btn-default">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+      <form class="form">
+
+        <div class="col-xs-6">
+          <div class="form-group">
+            <label for="search">Search</label>
+            <input type="text" id="search" class="form-control" ng-model="vm.search" placeholder="Search for student">
+          </div>
+        </div>
+
+        <div class="col-xs-6">
+          <label for="">Grades</label>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" checked> 6
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" checked> 7
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" checked> 8
+            </label>
+          </div>
+        </div>
+      </form>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <button class="btn btn-danger">Delete</button>
+    </div>
+  </div>
+
+  <table class="table table-hover">
+    <tr ng-class="{ danger:vm.checkbox[$index] }" ng-repeat="student in vm.allStudents | filter:vm.search | orderBy:['grade', 'name.last']">
+      <td>
+        <button class="btn btn-default btn-xs">Edit</button>
+      </td>
+      <td>
+        <input type="checkbox" ng-model="vm.checkbox[$index]">
+      </td>
+      <td>{{ student.name.last }}</td>
+      <td>{{ student.name.first }}</td>
+      <td>{{ student.grade }}</td>
+    </tr>
+  </table>
+</div>

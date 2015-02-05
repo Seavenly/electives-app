@@ -1,0 +1,48 @@
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-9">
+
+      <div class="list-wrapper row">
+        <div class="col-sm-6" ng-repeat-start="i in [0,1,2,3]">
+          <h2>Quarter {{ i+1 }}</h2>
+          <div ng-repeat="elective in vm.electives | quarter:i+1">
+            <select ng-model="vm.model[i][elective._id]"
+                    ng-change="vm.updateList(i, elective._id, elective)"
+                    ng-init="vm.model[i][elective._id] = 0">
+              <option value="0"></option>
+              <option value="1" ng-disabled="vm.disabled('1', i)">1</option>
+              <option value="2" ng-disabled="vm.disabled('2', i)">2</option>
+              <option value="3" ng-disabled="vm.disabled('3', i)">3</option>
+            </select>
+            <span>
+              {{ elective.name }}
+              <small ng-if="elective.semester" style="color:blue">(semester)</small>
+            </span>
+          </div>
+        </div>
+        <div class="clearfix" ng-repeat-end ng-if="$index%2!=0"></div>
+      </div>
+
+    </div>
+    <div class="col-md-3">
+
+      <h2>List Summary</h2>
+      <div ng-repeat="quarter in vm.list">
+        <h3>Quarter {{ $index + 1 }}</h3>
+        <ol>
+          <li ng-repeat="elective in quarter | orderBy:'pref'">
+            {{ elective.name }} <small style="color:red">{{ elective.pref }}</small>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+  <div class="row debug">
+    <div cass="col-xs-12">
+      <pre>{{ vm.list | json }}</pre>
+    </div>
+  </div>
+
+</div>
