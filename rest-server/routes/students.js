@@ -1,3 +1,5 @@
+'use strict';
+
 var Student           = require('../models/student');
 var generatePassword  = require('password-generator');
 
@@ -8,7 +10,7 @@ var students = {
     var header = arr.shift();
     var count = arr.length;
 
-    arr.forEach(function(line, i) {
+    arr.forEach(function(line) {
       var data = {
         name: {
           first: line[header.indexOf('First')],
@@ -89,7 +91,7 @@ var students = {
   delete: function(req, res) {
     Student.remove({
       _id: req.params.student_id
-    }, function(err, student) {
+    }, function(err) {
       if(err) { res.send(err); }
       res.json({ message: 'Successfully delete student'});
     });

@@ -1,3 +1,5 @@
+'use strict';
+
 var router   = require('express').Router();
 var students = require('./students');
 
@@ -24,7 +26,7 @@ router.route('/student/:student_id')
     students.update(req, res);
   })
   .delete(function(req, res) {
-    student.delete(req, res);
+    students.delete(req, res);
   });
 
 module.exports = router;
