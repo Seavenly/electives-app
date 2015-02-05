@@ -1,7 +1,20 @@
 {
-  "name": "electivesApp",
+  "name": "electives-app",
   "version": "0.0.0",
-  "dependencies": {},
+  "description": "School electives selection app",
+  "homepage": "https://github.com/Seavenly/electives-app",
+  "author": "Nathan Schott <nschott3@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Seavenly/electives-app.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.11.0",
+    "express": "^4.11.2",
+    "mongoose": "^3.8.22",
+    "password-generator": "^0.2.3"
+  },
   "devDependencies": {
     "gulp": "~3.8.10",
     "gulp-autoprefixer": "~2.0.0",
