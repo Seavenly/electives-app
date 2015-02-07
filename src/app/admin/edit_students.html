@@ -27,17 +27,17 @@
           <label for="">Grades</label>
           <div class="checkbox">
             <label>
-              <input type="checkbox" checked> 6
+              <input type="checkbox" checked ng-model="vm.show6"> 6
             </label>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" checked> 7
+              <input type="checkbox" checked ng-model="vm.show7"> 7
             </label>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" checked> 8
+              <input type="checkbox" checked ng-model="vm.show8"> 8
             </label>
           </div>
         </div>
@@ -50,17 +50,74 @@
     </div>
   </div>
 
-  <table class="table table-hover">
-    <tr ng-class="{ danger:vm.checkbox[$index] }" ng-repeat="student in vm.allStudents | filter:vm.search | orderBy:['grade', 'name.last']">
-      <td>
-        <button class="btn btn-default btn-xs">Edit</button>
-      </td>
-      <td>
+  <div class="table-div">
+    <div class="row" ng-class="{ 'bg-danger':vm.checkbox[$index] }" ng-repeat="student in vm.allStudents() | filter: vm.search | filter:vm.gradeFilter | orderBy:['grade', 'name.last', 'name.first']">
+      <div class="col-xs-2">
+        <button class="btn btn-default btn-xs" ng-click="vm.toggleEdit($index, student)">Edit</button>
+      </div>
+      <div class="col-xs-1">
         <input type="checkbox" ng-model="vm.checkbox[$index]">
-      </td>
-      <td>{{ student.name.last }}</td>
-      <td>{{ student.name.first }}</td>
-      <td>{{ student.grade }}</td>
-    </tr>
-  </table>
+      </div>
+      <div class="col-xs-4">{{ student.name.last }}</div>
+      <div class="col-xs-4">{{ student.name.first }}</div>
+      <div class="col-xs-1">{{ student.grade }}</div>
+      <div class="row">
+        <div class="col-xs-12" ng-show="vm.currentEdit.index === $index">
+          <form class="form-horizontal" ng-submit="vm.updateStudent()">
+
+            <div class="form-group">
+              <label class="col-xs-2 control-label">First</label>
+              <div class="col-xs-5">
+                <input type="text" class="form-control" ng-model="vm.currentEdit.name.first">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-xs-2 control-label">Last</label>
+              <div class="col-xs-5">
+                <input type="text" class="form-control" ng-model="vm.currentEdit.name.last">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-xs-2 control-label">Username</label>
+              <div class="col-xs-5">
+                <input type="text" class="form-control" ng-model="vm.currentEdit.username">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-xs-2 control-label">Grade</label>
+              <div class="col-xs-5">
+                <label class="radio-inline">
+                  <input type="radio" name="gradeRadio" ng-model="vm.currentEdit.grade" value="6">6
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="gradeRadio" ng-model="vm.currentEdit.grade" value="7">7
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="gradeRadio" ng-model="vm.currentEdit.grade" value="8">8
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-xs-5 col-xs-offset-2">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" ng-model="vm.currentEdit.spanish">Completed Spanish
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-offset-2">
+              <button class="btn btn-default">Save</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

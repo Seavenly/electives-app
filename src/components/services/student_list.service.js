@@ -3,10 +3,20 @@
 
   function studentList($window, $http) {
 
-    function getAllStudents(cb) {
+    var allStudents = null;
+
+    function getStudents() {
+      if(allStudents === null) {
+        getAllStudents();
+      }
+      return allStudents;
+    }
+
+    function getAllStudents() {
+      allStudents = [];
       $http.get('http://localhost:8080/api/students')
         .success(function(data) {
-          cb(data);
+          allStudents = data;
         });
     }
 
@@ -23,7 +33,7 @@
             }
             $http.post('http://localhost:8080/api/students', { students: temp })
               .success(function(data) {
-                console.log(data);
+                allStudents = allStudents.concat(data);
               });
           };
           reader.readAsText(files[0]);
@@ -33,9 +43,19 @@
       }
     }
 
+    function updateStudent(data, cb) {
+      $http.put('http://localhost:8080/api/student/'+data._id, data)
+        .success(function(data) {
+          _.assign(_.find(allStudents, { _id: data._id }), data);
+          cb();
+        });
+    }
+
     return {
+      getStudents: getStudents,
       getAllStudents: getAllStudents,
-      addAllStudents: addAllStudents
+      addAllStudents: addAllStudents,
+      updateStudent: updateStudent
     };
   }
 
