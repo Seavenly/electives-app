@@ -105,9 +105,9 @@ var students = {
   delete: function(req, res) {
     Student.remove({
       _id: req.params.student_id
-    }, function(err) {
+    }, function(err, student) {
       if(err) { res.send(err); }
-      res.json({ message: 'Successfully delete student'});
+      res.json(student);
     });
   }
 };

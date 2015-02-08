@@ -44,10 +44,18 @@
     }
 
     function updateStudent(data, cb) {
-      $http.put('http://localhost:8080/api/student/'+data._id, data)
+      $http.put('http://localhost:8080/api/student/' + data._id, data)
         .success(function(data) {
           _.assign(_.find(allStudents, { _id: data._id }), data);
           cb();
+        });
+    }
+
+    function deleteStudent(id) {
+      $http.delete('http://localhost:8080/api/student/' + id)
+        .success(function() {
+          var index = _.findIndex(allStudents, { _id: id });
+          allStudents.splice(index, 1);
         });
     }
 
@@ -55,7 +63,8 @@
       getStudents: getStudents,
       getAllStudents: getAllStudents,
       addAllStudents: addAllStudents,
-      updateStudent: updateStudent
+      updateStudent: updateStudent,
+      deleteStudent: deleteStudent
     };
   }
 

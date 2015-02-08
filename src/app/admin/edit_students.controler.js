@@ -26,6 +26,7 @@
     };
 
     vm.toggleEdit = function(index, student) {
+      console.log(student);
       if (vm.currentEdit.index === index) {
         vm.currentEdit.index = null;
       } else {
@@ -36,6 +37,23 @@
 
     vm.updateStudent = function() {
       studentList.updateStudent(vm.currentEdit);
+    };
+
+    vm.allSelected = false;
+    vm.toggleSelectAll = function() {
+      vm.allSelected = !vm.allSelected;
+      for(var key in vm.checkbox) {
+        vm.checkbox[key] = vm.allSelected;
+      }
+    };
+
+    vm.deleteStudents = function() {
+      for(var key in vm.checkbox) {
+        if (vm.checkbox[key] === true) {
+          studentList.deleteStudent(key);
+        }
+      }
+      if (vm.allSelected) { vm.toggleSelectAll(); }
     };
 
   }
