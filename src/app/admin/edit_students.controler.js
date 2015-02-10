@@ -1,13 +1,25 @@
 (function() {
   'use strict';
 
-  function EditStudentsCtrl(studentList) {
+  function EditStudentsCtrl(studentList, $filter, $scope) {
     var vm = this;
 
+    vm.limit = 10;
+    vm.start = 0;
+    vm.currPage = 0;
     vm.search = '';
     vm.show6 = vm.show7 = vm.show8 = true;
     vm.currentEdit = {};
     vm.allStudents = studentList.getStudents;
+
+    // Go to first page when user begins to search
+    $scope.$watch(function() {
+      return vm.search;
+    }, function(newVal, oldVal) {
+      if(newVal !== oldVal) {
+        vm.goToPage(0);
+      }
+    });
 
     vm.addAllStudents = function() {
       studentList.addAllStudents(vm.studentsFile);
@@ -56,9 +68,29 @@
       if (vm.allSelected) { vm.toggleSelectAll(); }
     };
 
+    vm.pages = function() {
+      var total = $filter('filter')($filter('filter')(vm.allStudents(), vm.search), vm.gradeFilter).length;
+      var numPages = Math.ceil(total / vm.limit);
+      return new Array(numPages);
+    };
+
+    vm.goToPage = function(index) {
+      if(index < 0 || index > vm.pages().length-1) {
+        return;
+      }
+      vm.currentEdit.index = null;
+      vm.currPage = index;
+      vm.start = index * vm.limit;
+    };
+
+    vm.setLimit = function(num) {
+      vm.limit = num;
+      vm.goToPage(0);
+    };
+
   }
 
   angular.module('electivesApp')
-    .controller('EditStudentsCtrl', ['studentList', '$upload', EditStudentsCtrl]);
+    .controller('EditStudentsCtrl', ['studentList', '$filter', '$scope', EditStudentsCtrl]);
 
 })();

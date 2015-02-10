@@ -16,14 +16,14 @@
   <div class="row">
       <form class="form">
 
-        <div class="col-xs-6">
+        <div class="col-xs-4">
           <div class="form-group">
             <label for="search">Search</label>
             <input type="text" id="search" class="form-control" ng-model="vm.search" placeholder="Search for student">
           </div>
         </div>
 
-        <div class="col-xs-6">
+        <div class="col-xs-2">
           <label for="">Grades</label>
           <div class="checkbox">
             <label>
@@ -41,24 +41,66 @@
             </label>
           </div>
         </div>
+
+        <div class="col-xs-6">
+
+
+        </div>
       </form>
   </div>
 
   <div class="row">
     <div class="col-xs-12">
-      <button class="btn btn-danger" ng-click="vm.deleteStudents()">Delete</button>
-      <button class="btn btn-default" ng-click="vm.toggleSelectAll()">
-        <span ng-hide="vm.allSelected">Select</span><span ng-show="vm.allSelected">Deselect</span> All
-      </button>
+
+      <div class="btn-group btn-group-sm" role="group" aria-label="...">
+        <button class="btn btn-danger" ng-click="vm.deleteStudents()">Delete</button>
+        <button class="btn btn-default" ng-click="vm.toggleSelectAll()">
+          <span ng-hide="vm.allSelected">Select</span><span ng-show="vm.allSelected">Deselect</span> All
+        </button>
+      </div>
+
+      <div class="btn-group btn-group-sm" role="group" aria-label="...">
+        <button type="button" class="btn btn-default">
+          <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn-default" ng-class="{'btn-primary': vm.limit===10}" ng-click="vm.setLimit(10)">10</button>
+        <button type="button" class="btn btn-default" ng-class="{'btn-primary': vm.limit===25}" ng-click="vm.setLimit(25)">25</button>
+        <button type="button" class="btn btn-default" ng-class="{'btn-primary': vm.limit===50}" ng-click="vm.setLimit(50)">50</button>
+        <button type="button" class="btn btn-default" ng-class="{'btn-primary': vm.limit===100}" ng-click="vm.setLimit(100)">100</button>
+      </div>
+
     </div>
   </div>
 
+  <nav class="clearfix">
+    <ul class="pagination pull-right">
+      <li ng-click="vm.goToPage(vm.currPage-1)">
+        <a href aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li ng-repeat="i in vm.pages() track by $index" ng-click="vm.goToPage($index)" ng-class="{active: $index==vm.currPage}">
+        <a href>{{ $index + 1 }}</a>
+      </li>
+      <li ng-click="vm.goToPage(vm.currPage+1)">
+        <a href aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
   <div class="table-div">
-    <div class="row" ng-class="{ 'bg-danger':vm.checkbox[student._id] }" ng-repeat="student in vm.allStudents() | filter: vm.search | filter:vm.gradeFilter | orderBy:['grade', 'name.last', 'name.first']">
+    <div class="row">
+      <div class="col-xs-4 col-xs-offset-1"><h4>Last</h4></div>
+      <div class="col-xs-4"><h4>First</h4></div>
+      <div class="col-xs-2"><h4>Grade</h4></div>
+    </div>
+    <div class="row" ng-class="{ 'bg-danger':vm.checkbox[student._id] }" ng-repeat="student in vm.allStudents() | filter: vm.search | filter: vm.gradeFilter | orderBy: ['grade', 'name.last', 'name.first'] | startFrom: vm.start | limitTo: vm.limit">
       <div class="col-xs-1">
         <input type="checkbox" ng-model="vm.checkbox[student._id]" ng-init="vm.checkbox[student._id] = false">
       </div>
-      <div class="clearfix" ng-click="vm.toggleEdit($index, student)">
+      <div class="clearfix click" ng-click="vm.toggleEdit($index, student)">
         <div class="col-xs-4">{{ student.name.last }}</div>
         <div class="col-xs-4">{{ student.name.first }}</div>
         <div class="col-xs-2">{{ student.grade }}</div>
@@ -125,4 +167,5 @@
       </div>
     </div>
   </div>
+
 </div>
