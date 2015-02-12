@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  function studentList($window, $http) {
+  function students($window, $http) {
 
     var allStudents = null;
 
@@ -69,6 +69,6 @@
   }
 
   angular.module('electivesApp')
-    .factory('studentList', ['$window', '$http', studentList]);
+    .factory('students', ['$window', '$http', students]);
 
 })();

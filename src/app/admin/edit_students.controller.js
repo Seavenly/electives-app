@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  function EditStudentsCtrl(studentList, $filter, $scope) {
+  function EditStudentsCtrl(students, $filter, $scope) {
     var vm = this;
 
     vm.limit = 10;
@@ -10,7 +10,7 @@
     vm.search = '';
     vm.show6 = vm.show7 = vm.show8 = true;
     vm.currentEdit = {};
-    vm.allStudents = studentList.getStudents;
+    vm.allStudents = students.getStudents;
 
     // Go to first page when user begins to search
     $scope.$watch(function() {
@@ -22,23 +22,18 @@
     });
 
     vm.addAllStudents = function() {
-      studentList.addAllStudents(vm.studentsFile);
+      students.addAllStudents(vm.studentsFile);
     };
 
     vm.gradeFilter = function(val) {
-      if (vm.show6 && val.grade === 6) {
-        return true;
-      } else if (vm.show7 && val.grade === 7) {
-        return true;
-      } else if (vm.show8 && val.grade === 8) {
-        return true;
-      } else {
+      var name = (val.name.first + ' ' + val.name.last).toLowerCase();
+      if(!(vm.show6 && val.grade === 6) && !(vm.show7 && val.grade === 7) && !(vm.show8 && val.grade === 8) || name.indexOf(vm.search.toLowerCase()) === -1) {
         return false;
       }
+      return true;
     };
 
     vm.toggleEdit = function(index, student) {
-      console.log(student);
       if (vm.currentEdit.index === index) {
         vm.currentEdit.index = null;
       } else {
@@ -48,7 +43,7 @@
     };
 
     vm.updateStudent = function() {
-      studentList.updateStudent(vm.currentEdit);
+      students.updateStudent(vm.currentEdit);
     };
 
     vm.allSelected = false;
@@ -62,7 +57,7 @@
     vm.deleteStudents = function() {
       for(var key in vm.checkbox) {
         if (vm.checkbox[key] === true) {
-          studentList.deleteStudent(key);
+          students.deleteStudent(key);
         }
       }
       if (vm.allSelected) { vm.toggleSelectAll(); }
@@ -91,6 +86,6 @@
   }
 
   angular.module('electivesApp')
-    .controller('EditStudentsCtrl', ['studentList', '$filter', '$scope', EditStudentsCtrl]);
+    .controller('EditStudentsCtrl', ['students', '$filter', '$scope', EditStudentsCtrl]);
 
 })();
