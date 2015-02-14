@@ -13,8 +13,10 @@
 .table-div
   margin-bottom 5em
   > .row
+    position relative
     padding .6em 0 .6em
     border-bottom 1px solid #ccc
+    background-color white
     &:nth-child(2n-1)
       background-color #fafafa
 
@@ -26,8 +28,27 @@
       &:hover
         background-color #dbb
 
+img
+  max-width 100%
 
 .click
   cursor pointer
+
+// .edit-form
+//   transform-origin 0 0
+//   transform scaleY(1)
+//
+// .edit-form.ng-enter
+// .edit-form.ng-leave
+//   transition transform .6s ease
+//
+// .edit-form.ng-enter
+// .edit-form.ng-leave.ng-leave-active
+//   transform scaleY(0)
+//
+// .edit-form.ng-leave
+// .edit-form.ng-enter.ng-enter-active
+//   transform scaleY(1)
+
 // injector
 // endinjector

@@ -2,7 +2,7 @@
 
 angular.module('electivesApp')
   .controller('ElectiveCtrl',
-  function(Electives, $stateParams) {
+  function(electives, $stateParams) {
     this.id = $stateParams.id;
-    this.elective = Electives.findById(this.id);
+    this.elective = electives.findById(this.id);
   });

@@ -27,6 +27,11 @@ angular.module('electivesApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize
         url: '/admin/edit_students',
         templateUrl: 'app/admin/edit_students.html',
         controller: 'EditStudentsCtrl as vm'
+      })
+      .state('editElectives', {
+        url: '/admin/edit_electives',
+        templateUrl: 'app/admin/edit_electives.html',
+        controller: 'EditElectivesCtrl as vm'
       });
 
     $urlRouterProvider.otherwise('/');

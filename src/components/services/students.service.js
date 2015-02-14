@@ -43,11 +43,10 @@
       }
     }
 
-    function updateStudent(data, cb) {
+    function updateStudent(data) {
       $http.put('http://localhost:8080/api/student/' + data._id, data)
         .success(function(data) {
           _.assign(_.find(allStudents, { _id: data._id }), data);
-          cb();
         });
     }
 

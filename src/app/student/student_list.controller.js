@@ -1,10 +1,10 @@
 (function() {
   'use strict';
 
-  function StudentListCtrl(Electives) {
+  function StudentListCtrl(electives) {
     var vm = this;
 
-    vm.electives = Electives.all;
+    vm.electives = electives.all;
     vm.list = [ [], [], [], [] ];
 
     vm.updateList = function(quarter, id, elective) {
@@ -39,6 +39,6 @@
   }
 
   angular.module('electivesApp')
-    .controller('StudentListCtrl', ['Electives', StudentListCtrl]);
+    .controller('StudentListCtrl', ['electives', StudentListCtrl]);
 
 })();

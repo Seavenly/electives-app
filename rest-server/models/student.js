@@ -15,12 +15,12 @@ var StudentSchema = new Schema({
   spanish: Boolean,
   submit: Date,
   list: {
-    q1: [String], //["_id"],
-    q2: [String], //["_id"],
-    q3: [String], //["_id"],
-    q4: [String], //["_id"]
+    q1: [String], //ids
+    q2: [String], //ids
+    q3: [String], //ids
+    q4: [String], //ids
   },
-  electives: [String] //["_id"]
+  electives: [String] //ids
 });
 
 module.exports = mongoose.model('Student', StudentSchema);
