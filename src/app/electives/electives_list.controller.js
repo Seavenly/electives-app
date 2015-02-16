@@ -3,5 +3,5 @@
 angular.module('electivesApp')
   .controller('ElectivesListCtrl',
   function(electives) {
-    this.electives = electives.getElectives;
+    this.electives = electives;
   });

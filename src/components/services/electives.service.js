@@ -3,17 +3,10 @@
 
   function electives($http) {
 
-    var allElectives = null;
-
-    function getElectives() {
-      return allElectives;
-    }
-
     function getAll() {
-      allElectives = [];
       $http.get('http://localhost:8080/api/electives')
         .success(function(data) {
-          allElectives = data;
+          electivesObj.data = data;
         });
     }
     getAll();
@@ -21,38 +14,37 @@
     function add(elective) {
       $http.post('http://localhost:8080/api/electives', elective)
         .success(function(data) {
-          allElectives = allElectives.concat(data);
+          electivesObj.data = electivesObj.data.concat(data);
         });
     }
 
-    function updateElective(elective) {
+    function update(elective) {
       $http.put('http://localhost:8080/api/electives/' + elective._id, elective)
         .success(function(data) {
-          _.assign(_.find(allElectives, { _id: elective._id }), data);
-          console.log(allElectives);
+          _.assign(_.find(electivesObj.data, { _id: elective._id }), data);
         });
     }
 
-    function deleteElective(id) {
+    function remove(id) {
       $http.delete('http://localhost:8080/api/electives/' + id)
         .success(function() {
-          var index = _.findIndex(allElectives, { _id: id});
-          allElectives.splice(index, 1);
+          var index = _.findIndex(electivesObj.data, { _id: id});
+          electivesObj.data.splice(index, 1);
         });
     }
 
     function findById(id) {
-      return _.find(allElectives, { _id: id });
+      return _.find(electivesObj.data, { _id: id });
     }
 
-    return {
-      getElectives: getElectives,
-      getAll: getAll,
+    var electivesObj = {
+      data: null,
       add: add,
-      update: updateElective,
-      delete: deleteElective,
+      update: update,
+      delete: remove,
       findById: findById
     };
+    return electivesObj;
   }
 
   angular.module('electivesApp')

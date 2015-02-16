@@ -3,6 +3,7 @@
 
   function startFrom() {
     return function(input, start) {
+      if (input === null) { return; }
       start = +start;
       return input.slice(start);
     };

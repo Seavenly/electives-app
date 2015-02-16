@@ -10,7 +10,7 @@
     vm.search = '';
     vm.show6 = vm.show7 = vm.show8 = true;
     vm.currentEdit = {};
-    vm.allStudents = students.getStudents;
+    vm.students = students;
 
     // Go to first page when user begins to search
     $scope.$watch(function() {
@@ -22,7 +22,7 @@
     });
 
     vm.addAllStudents = function() {
-      students.addAllStudents(vm.studentsFile);
+      students.addAll(vm.studentsFile);
     };
 
     vm.gradeFilter = function(val) {
@@ -43,7 +43,7 @@
     };
 
     vm.updateStudent = function() {
-      students.updateStudent(vm.currentEdit);
+      students.update(vm.currentEdit);
     };
 
     vm.allSelected = false;
@@ -57,14 +57,15 @@
     vm.deleteStudents = function() {
       for(var key in vm.checkbox) {
         if (vm.checkbox[key] === true) {
-          students.deleteStudent(key);
+          students.remove(key);
         }
       }
       if (vm.allSelected) { vm.toggleSelectAll(); }
     };
 
     vm.pages = function() {
-      var total = $filter('filter')($filter('filter')(vm.allStudents(), vm.search), vm.gradeFilter).length;
+      if (vm.students.data === null) { return; }
+      var total = $filter('filter')($filter('filter')(vm.students.data, vm.search), vm.gradeFilter).length;
       var numPages = Math.ceil(total / vm.limit);
       return new Array(numPages);
     };

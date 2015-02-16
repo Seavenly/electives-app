@@ -4,7 +4,7 @@
   function EditElectivesCtrl(electives) {
     var vm = this;
 
-    vm.electives = electives.getElectives;
+    vm.electives = electives;
     vm.currentEdit = {};
 
     function setForm() {
@@ -30,8 +30,6 @@
       for(var grade in form.grades) {
         if(form.grades[grade] === true) { grades.push(+grade); }
       }
-
-      console.log(form.semester);
 
       var elective = {
         _id:          form._id,
@@ -75,6 +73,7 @@
 
     vm.allSelected = false;
     vm.toggleSelectAll = function() {
+      console.log('ALL:', vm.data);
       vm.allSelected = !vm.allSelected;
       for(var key in vm.checkbox) {
         vm.checkbox[key] = vm.allSelected;
@@ -84,7 +83,7 @@
     vm.deleteElectives = function() {
       for(var key in vm.checkbox) {
         if (vm.checkbox[key] === true) {
-          electives.delete(key);
+          electives.remove(key);
         }
       }
       if (vm.allSelected) { vm.toggleSelectAll(); }

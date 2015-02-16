@@ -3,24 +3,15 @@
 
   function students($window, $http) {
 
-    var allStudents = null;
-
-    function getStudents() {
-      if(allStudents === null) {
-        getAllStudents();
-      }
-      return allStudents;
-    }
-
     function getAllStudents() {
-      allStudents = [];
       $http.get('http://localhost:8080/api/students')
         .success(function(data) {
-          allStudents = data;
+          studentsObj.data = data;
         });
     }
+    getAllStudents();
 
-    function addAllStudents(files) {
+    function addAll(files) {
       if(files && files.length) {
         if($window.FileReader){
           var reader = new $window.FileReader();
@@ -33,7 +24,7 @@
             }
             $http.post('http://localhost:8080/api/students', { students: temp })
               .success(function(data) {
-                allStudents = allStudents.concat(data);
+                studentsObj.data = studentsObj.data.concat(data);
               });
           };
           reader.readAsText(files[0]);
@@ -43,28 +34,28 @@
       }
     }
 
-    function updateStudent(data) {
+    function update(data) {
       $http.put('http://localhost:8080/api/student/' + data._id, data)
         .success(function(data) {
-          _.assign(_.find(allStudents, { _id: data._id }), data);
+          _.assign(_.find(studentsObj.data, { _id: data._id }), data);
         });
     }
 
-    function deleteStudent(id) {
+    function remove(id) {
       $http.delete('http://localhost:8080/api/student/' + id)
         .success(function() {
-          var index = _.findIndex(allStudents, { _id: id });
-          allStudents.splice(index, 1);
+          var index = _.findIndex(studentsObj.data, { _id: id });
+          studentsObj.data.splice(index, 1);
         });
     }
 
-    return {
-      getStudents: getStudents,
-      getAllStudents: getAllStudents,
-      addAllStudents: addAllStudents,
-      updateStudent: updateStudent,
-      deleteStudent: deleteStudent
+    var studentsObj = {
+      data: null,
+      addAll: addAll,
+      update: update,
+      remove: remove
     };
+    return studentsObj;
   }
 
   angular.module('electivesApp')

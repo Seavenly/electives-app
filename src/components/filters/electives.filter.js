@@ -4,7 +4,7 @@ angular.module('electivesApp')
   .filter('quarter',
   function() {
     return function(input, quarter) {
-      console.log(input);
+      if (input === null) { return; }
       quarter = typeof quarter === 'undefined' ? 1 : quarter;
       var qElectives = [];
       for(var i=0;i<input.length;i++) {

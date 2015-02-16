@@ -1,10 +1,10 @@
 <div class="container">
   <div class="row">
-    <div class="col-sm-6 .col-sm-offset-3" ng-repeat-start="elective in vm.electives()">
+    <div class="col-sm-6 .col-sm-offset-3" ng-repeat-start="elective in vm.electives.data">
       <h3><a href="#/electives_list/{{elective._id}}">{{ elective.name }}</a> <small>({{ elective.cap }})</small></h3>
       <img class="img-responsive img-thumbnail" ng-src="{{elective.images[0]}}" />
       <p>{{ elective.description }}</p>
-      <small>Quarters: {{ elective.quarters.avail.join(', ') }}</small><br />
+      <small>Quarters: {{ elective.quarters.available.join(', ') }}</small><br />
       <small>Grades: {{ elective.grades.join(', ') }}</small>
     </div>
     <div ng-repeat-end class="clearfix" ng-if="$index%2===1" style="padding-bottom: 3em;"></div>
