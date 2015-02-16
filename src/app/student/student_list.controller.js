@@ -4,7 +4,7 @@
   function StudentListCtrl(electives) {
     var vm = this;
 
-    vm.electives = electives.all;
+    vm.electives = electives.getElectives;
     vm.list = [ [], [], [], [] ];
 
     vm.updateList = function(quarter, id, elective) {

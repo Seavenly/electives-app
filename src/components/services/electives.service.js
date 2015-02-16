@@ -6,9 +6,6 @@
     var allElectives = null;
 
     function getElectives() {
-      if(allElectives === null) {
-        getAll();
-      }
       return allElectives;
     }
 
@@ -19,6 +16,7 @@
           allElectives = data;
         });
     }
+    getAll();
 
     function add(elective) {
       $http.post('http://localhost:8080/api/electives', elective)
@@ -43,12 +41,17 @@
         });
     }
 
+    function findById(id) {
+      return _.find(allElectives, { _id: id });
+    }
+
     return {
       getElectives: getElectives,
       getAll: getAll,
       add: add,
       update: updateElective,
       delete: deleteElective,
+      findById: findById
     };
   }
 
