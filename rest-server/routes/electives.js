@@ -31,7 +31,6 @@ var electives = {
 
       newElective.save(function(err) {
         if (err) { res.send(err); }
-        console.log('New elective');
         res.json(newElective);
       });
     });

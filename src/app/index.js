@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('electivesApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ui.router', 'ui.bootstrap', 'angularFileUpload'])
-  .config(function ($stateProvider, $urlRouterProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
+    $httpProvider.defaults.withCredentials = true;
     $stateProvider
       .state('home', {
         url: '/',
@@ -36,4 +37,7 @@ angular.module('electivesApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize
 
     $urlRouterProvider.otherwise('/');
   })
+  .run(['user', function(user) {
+    user.isLoggedIn();
+  }])
 ;

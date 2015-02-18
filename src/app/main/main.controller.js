@@ -1,6 +1,11 @@
-'use strict';
+(function() {
+  'use strict';
 
-angular.module('electivesApp')
-  .controller('MainCtrl', function () {
+  function MainCtrl() {
 
-  });
+  }
+
+  angular.module('electivesApp')
+    .controller('MainCtrl', [MainCtrl]);  
+
+})();
