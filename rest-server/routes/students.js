@@ -88,16 +88,29 @@ var students = {
 
   update: function(req, res) {
     Student.findById(req.params.student_id, function(err, student) {
-      if(err) { res.send(err); }
-      student.name.first    = req.body.name.first;
-      student.name.last     = req.body.name.last;
-      student.username      = req.body.username;
-      student.grade         = req.body.grade;
-      student.spanish       = req.body.spanish;
+      if (err) { res.send(err); }
+      if (req.body.name && req.body.name.first)   { student.name.first    = req.body.name.first; }
+      if (req.body.name && req.body.name.last)    { student.name.last     = req.body.name.last; }
+      if (req.body.username)                      { student.username      = req.body.username; }
+      if (req.body.grade)                         { student.grade         = req.body.grade; }
+      if (req.body.spanish)                       { student.spanish       = req.body.spanish; }
+      if (req.body.pass && req.body.pass.student) { student.pass.student  = req.body.pass.student; }
+      if (req.body.pass && req.body.pass.parent)  { student.pass.parent   = req.body.pass.parent; }
+      if (req.body.electives)                     { student.electives     = req.body.electives; }
+
+      if (req.body.list)                          { student.list          = req.body.list;
+                                                    student.submit        = new Date(); }
 
       student.save(function(err) {
         if(err) { res.send(err); }
-        res.json(student);
+        if (req.isAuthenticated()) {
+          var studentObj = student.toObject();
+          delete studentObj.pass;
+          console.log(studentObj);
+          res.json(studentObj);
+        } else {
+          res.json(student);
+        }
       });
     });
   },

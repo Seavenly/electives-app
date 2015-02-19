@@ -35,7 +35,7 @@
     function isLoggedIn() {
       $http.post('http://localhost:8080/auth/profile')
         .success(function(data) {
-          if (data._id) {
+          if (data.hasOwnProperty('_id')) {
             currUser = data;
           }
         });

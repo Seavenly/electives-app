@@ -8,12 +8,12 @@
           <h2>Quarter {{ i+1 }}</h2>
           <div ng-repeat="elective in vm.electives.data | quarter:i+1">
             <select ng-model="vm.model[i][elective._id]"
-                    ng-change="vm.updateList(i, elective._id, elective)"
-                    ng-init="vm.model[i][elective._id] = 0">
+                    ng-change="vm.updateList(i, elective)"
+                    ng-init="vm.model[i][elective._id] = vm.getPref(i, elective._id)">
               <option value="0"></option>
-              <option value="1" ng-disabled="vm.disabled('1', i)">1</option>
-              <option value="2" ng-disabled="vm.disabled('2', i)">2</option>
-              <option value="3" ng-disabled="vm.disabled('3', i)">3</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
             </select>
             <span>
               {{ elective.name }}
@@ -28,7 +28,7 @@
     <div class="col-md-3">
 
       <h2>List Summary</h2>
-      <div ng-repeat="quarter in vm.list">
+      <div ng-repeat="quarter in vm.list()">
         <h3>Quarter {{ $index + 1 }}</h3>
         <ol>
           <li ng-repeat="elective in quarter | orderBy:'pref'">
@@ -36,12 +36,13 @@
           </li>
         </ol>
       </div>
+      <button class="btn btn-default" ng-click="vm.saveList()">Save</button>
 
     </div>
   </div>
   <div class="row debug">
     <div cass="col-xs-12">
-      <pre>{{ vm.list | json }}</pre>
+      <pre>{{ vm.list() | json }}</pre>
     </div>
   </div>
 
