@@ -1,15 +1,23 @@
 (function() {
   'use strict';
 
-  function electives($http) {
+  function electives($http, $q) {
 
-    function getAll() {
-      $http.get('http://localhost:8080/api/electives')
-        .success(function(data) {
-          electivesObj.data = data;
-        });
+    function load() {
+      var deferred = $q.defer();
+      if(electivesObj.data) { deferred.resolve(electivesObj.data); }
+      else {
+        $http.get('http://localhost:8080/api/electives')
+          .success(function(data) {
+            electivesObj.data = data;
+            deferred.resolve(electivesObj.data);
+          })
+          .error(function(data) {
+            deferred.reject(data);
+          });
+      }
+      return deferred.promise;
     }
-    getAll();
 
     function add(elective) {
       $http.post('http://localhost:8080/api/electives', elective)
@@ -39,6 +47,7 @@
 
     var electivesObj = {
       data: null,
+      load: load,
       add: add,
       update: update,
       delete: remove,
@@ -48,6 +57,6 @@
   }
 
   angular.module('electivesApp')
-    .factory('electives', ['$http', electives]);
+    .factory('electives', ['$http', '$q', electives]);
 
 })();

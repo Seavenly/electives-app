@@ -37,7 +37,12 @@ angular.module('electivesApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize
 
     $urlRouterProvider.otherwise('/');
   })
-  .run(['user', function(user) {
-    user.isLoggedIn();
+  .run(['$q', 'user', 'electives', 'students', 'studentList',
+  function($q, user, electives, students, studentList) {
+    //StudentList service relies on electives and user service
+    $q.all([electives.load(), user.load()]).then(function(data) {
+      if(data[1]){ studentList.load(); }
+    });
+    students.load();
   }])
 ;

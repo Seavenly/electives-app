@@ -10,17 +10,16 @@
 
     vm.updateList = function(quarter, elective) {
       for (var id in vm.model[quarter]) {
-        if(vm.model[quarter][id] === vm.model[quarter][elective._id] && id !== elective._id) {
+        if(+vm.model[quarter][id] === +vm.model[quarter][elective._id] && id !== elective._id) {
           vm.model[quarter][id] = 0;
         }
       }
-      studentList.add(elective, quarter, vm.model[quarter][elective._id]);
+      studentList.set(elective, quarter, +vm.model[quarter][elective._id]);
     };
 
     vm.saveList = function() {
       studentList.save();
     };
-
   }
 
   angular.module('electivesApp')

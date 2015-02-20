@@ -1,15 +1,23 @@
 (function() {
   'use strict';
 
-  function students($window, $http) {
+  function students($window, $http, $q) {
 
-    function getAllStudents() {
-      $http.get('http://localhost:8080/api/students')
-        .success(function(data) {
-          studentsObj.data = data;
-        });
+    function load() {
+      var deferred = $q.defer();
+      if(studentsObj.data) { deferred.resolve(studentsObj.data); }
+      else {
+        $http.get('http://localhost:8080/api/students')
+          .success(function(data) {
+            studentsObj.data = data;
+            deferred.resolve(studentsObj.data);
+          })
+          .error(function(data) {
+            deferred.reject(data);
+          });
+      }
+      return deferred.promise;
     }
-    getAllStudents();
 
     function addAll(files) {
       if(files && files.length) {
@@ -51,6 +59,7 @@
 
     var studentsObj = {
       data: null,
+      load: load,
       addAll: addAll,
       update: update,
       remove: remove
@@ -59,6 +68,6 @@
   }
 
   angular.module('electivesApp')
-    .factory('students', ['$window', '$http', students]);
+    .factory('students', ['$window', '$http', '$q', students]);
 
 })();

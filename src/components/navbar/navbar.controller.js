@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  function NavbarCtrl($state, $http, user) {
+  function NavbarCtrl($state, $http, user, authEvents) {
     var vm = this;
 
     vm.currentUser = user.currentUser;
@@ -12,6 +12,8 @@
 
     vm.login = function() {
       user.login(vm.username, vm.password);
+      vm.username = '';
+      vm.password = '';
     };
 
     vm.logout = function() {
@@ -21,9 +23,14 @@
     vm.isLoggedIn = function() {
       return user.currentUser() !== null;
     };
+
+    authEvents.student.onUnauth(function() {
+      $state.go('home');
+    });
+
   }
 
   angular.module('electivesApp')
-    .controller('NavbarCtrl', ['$state', '$http', 'user', NavbarCtrl]);
+    .controller('NavbarCtrl', ['$state', '$http', 'user', 'authEvents', NavbarCtrl]);
 
 })();

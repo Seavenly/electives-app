@@ -1,11 +1,31 @@
 (function() {
   'use strict';
 
-  function user($http) {
+  function user($http, $q, authEvents) {
     var currUser = null;
 
     function currentUser() {
       return currUser;
+    }
+
+    function load() {
+      var deferred = $q.defer();
+      if(currUser) { deferred.resolve(currUser); }
+      else {
+        $http.post('http://localhost:8080/auth/profile')
+          .success(function(data) {
+            if (data.hasOwnProperty('_id')) {
+              currUser = data;
+              deferred.resolve(currUser);
+            } else {
+              deferred.resolve(false);
+            }
+          })
+          .error(function(data) {
+            deferred.reject(data);
+          });
+      }
+      return deferred.promise;
     }
 
     function login(username, password) {
@@ -21,6 +41,7 @@
         .success(function(data) {
           if (data.hasOwnProperty('_id')) {
             currUser = data;
+            authEvents.student.auth();
           }
         });
     }
@@ -29,15 +50,7 @@
       $http.post('http://localhost:8080/auth/logout')
         .success(function() {
           currUser = null;
-        });
-    }
-
-    function isLoggedIn() {
-      $http.post('http://localhost:8080/auth/profile')
-        .success(function(data) {
-          if (data.hasOwnProperty('_id')) {
-            currUser = data;
-          }
+          authEvents.student.unauth();
         });
     }
 
@@ -45,11 +58,11 @@
       currentUser: currentUser,
       login: login,
       logout: logout,
-      isLoggedIn: isLoggedIn
+      load: load
     };
   }
 
   angular.module('electivesApp')
-    .factory('user', ['$http', user]);
+    .factory('user', ['$http', '$q', 'authEvents', user]);
 
 })();
