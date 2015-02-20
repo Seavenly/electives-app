@@ -35,6 +35,51 @@
       else { return 0; }
     }
 
+    // 1.  3 electives per quarter
+    // 2.  elective available for user's grade
+    // 3.  elective available in listed quarter
+    // 4.  8th graders need required elective(s) if not complete
+    function validateList(currUser) {
+      var userList = currUser.list;
+      var errors = [];
+
+      var requiredElectives = _.pluck(_.filter(electives.data, { required: true }), '_id');
+      var missingRequired = _.difference(requiredElectives, currUser.required);
+      var addedRequired = [];
+
+      for (var quarter in userList) {
+        // 1.
+        if (userList[quarter].length !== 3) {
+          errors.push('invalid length: '+userList[quarter].length+' ('+quarter+')');
+        }
+        for (var i in userList[quarter]) {
+          var elective = electives.findById(userList[quarter][i]);
+          // 2.
+          if (_.indexOf(elective.grades, currUser.grade) === -1) {
+            errors.push('invalid grade: '+currUser.grade+' ('+elective.name+' '+elective.grades+')');
+          }
+          // 3.
+          if (_.indexOf(elective.quarters.available, +quarter[1]) === -1) {
+            errors.push('invalid quarter: '+quarter[1]+' ('+elective.name+' '+elective.quarters.available+')');
+          }
+          if (_.indexOf(missingRequired, elective._id) !== -1) {
+            addedRequired.push(elective._id);
+          }
+        }
+      }
+      // 4.
+      var missing = _.difference(missingRequired, addedRequired);
+      missing = _.map(missing, function(id) { return electives.findById(id).name; });
+      if (missing.length > 0 && currUser.grade === 8) {
+        errors.push('The following elective(s) are required: '+missing.toString());
+      }
+      if (errors.length > 0) {
+        console.log(errors);
+        return false;
+      }
+      return true;
+    }
+
     function save() {
       var currUser = user.currentUser();
       currUser.list.q1 = _.pluck(_.sortBy(list[0], 'pref'), '_id');
@@ -42,10 +87,12 @@
       currUser.list.q3 = _.pluck(_.sortBy(list[2], 'pref'), '_id');
       currUser.list.q4 = _.pluck(_.sortBy(list[3], 'pref'), '_id');
 
-      $http.put('http://localhost:8080/api/student/' + currUser._id, { list: currUser.list})
-        .success(function(data) {
-          _.assign(currUser, data);
-        });
+      if (validateList(currUser)) {
+        $http.put('http://localhost:8080/api/student/' + currUser._id, { list: currUser.list})
+          .success(function(data) {
+            _.assign(currUser, data);
+          });
+      }
     }
 
     function load() {

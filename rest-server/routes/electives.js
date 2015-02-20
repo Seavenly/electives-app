@@ -22,6 +22,7 @@ var electives = {
         images:       req.body.images,
         semester:     req.body.semester,
         grades:       req.body.grades,
+        required:     req.body.required,
         cap:          req.body.cap,
         quarters: {
           available:     req.body.quarters.available,
@@ -54,6 +55,7 @@ var electives = {
       elective.images             = req.body.images;
       elective.semester           = req.body.semester;
       elective.grades             = req.body.grades;
+      elective.required           = req.body.required;
       elective.cap                = req.body.cap;
       elective.quarters.available = req.body.quarters.available;
 

@@ -21,7 +21,6 @@ module.exports = function(passport) {
 
   router.route('/logout')
     .post(function(req, res) {
-      console.log('Logout request');
       req.logout();
       res.json({ message: 'Logged out successfully' });
     });

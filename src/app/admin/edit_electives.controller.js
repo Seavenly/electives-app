@@ -38,6 +38,7 @@
         images:       [form.image],
         semester:     (form.semester === 'true'),
         grades:       grades,
+        required:     form.required, 
         cap:          form.cap,
         quarters: {
           available:     quarters

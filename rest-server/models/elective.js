@@ -7,6 +7,7 @@ var ElectiveSchema = new Schema({
   images: [String],
   semester: Boolean,
   grades: [Number],
+  required: Boolean,
   cap: Number,
   quarters: {
     available: [Number],

@@ -12,7 +12,7 @@ var StudentSchema = new Schema({
   },
   username: String,
   grade: Number,
-  spanish: Boolean,
+  required: [String], //required electives taken
   submit: Date,
   list: {
     q1: [String], //ids

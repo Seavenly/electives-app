@@ -19,7 +19,7 @@ var students = {
           last: line[header.indexOf('Last')],
         },
         grade: line[header.indexOf('Grade')],
-        spanish: false,
+        required: [],
         pass: {
           student: generatePassword(),
           parent: generatePassword(3, false)
@@ -59,7 +59,7 @@ var students = {
       student.name.first    = req.body.name.first;
       student.name.last     = req.body.name.last;
       student.grade         = req.body.grade;
-      student.spanish       = req.body.spanish;
+      student.required      = [];
 
       student.pass.student  = generatePassword();
       student.pass.parent   = generatePassword(3, false);
@@ -93,7 +93,7 @@ var students = {
       if (req.body.name && req.body.name.last)    { student.name.last     = req.body.name.last; }
       if (req.body.username)                      { student.username      = req.body.username; }
       if (req.body.grade)                         { student.grade         = req.body.grade; }
-      if (req.body.spanish)                       { student.spanish       = req.body.spanish; }
+      if (req.body.required)                     { student.required      = req.body.required; }
       if (req.body.pass && req.body.pass.student) { student.pass.student  = req.body.pass.student; }
       if (req.body.pass && req.body.pass.parent)  { student.pass.parent   = req.body.pass.parent; }
       if (req.body.electives)                     { student.electives     = req.body.electives; }
@@ -106,7 +106,6 @@ var students = {
         if (req.isAuthenticated()) {
           var studentObj = student.toObject();
           delete studentObj.pass;
-          console.log(studentObj);
           res.json(studentObj);
         } else {
           res.json(student);
