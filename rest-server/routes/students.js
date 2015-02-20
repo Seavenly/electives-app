@@ -1,5 +1,6 @@
 'use strict';
 
+var User              = require('../models/user');
 var Student           = require('../models/student');
 var generatePassword  = require('password-generator');
 
@@ -13,35 +14,48 @@ var students = {
 
     arr.forEach(function(line) {
       if(!line) { return; }
-      var data = {
+
+      var newUser = new User({
+        name: {
+          first: line[header.indexOf('First')],
+          last: line[header.indexOf('Last')],
+        },
+        username: (line[header.indexOf('First')][0] + line[header.indexOf('Last')]).toLowerCase(),
+        password: generatePassword(),
+        access: 'student'
+      });
+
+      var newStudent = new Student({
         name: {
           first: line[header.indexOf('First')],
           last: line[header.indexOf('Last')],
         },
         grade: line[header.indexOf('Grade')],
-        required: [],
-        pass: {
-          student: generatePassword(),
-          parent: generatePassword(3, false)
-        }
-      };
+        authPassword: generatePassword(3, false)
+      });
 
-      var username = (data.name.first[0] + data.name.last).toLowerCase();
-      Student.findOne({ username: username }, function(err, student) {
+      newUser.data = newStudent._id;
+      newStudent._user = newUser._id;
+
+      Student.findOne({ username: newUser.username }, function(err, student) {
         if(err) { res.send(err); }
         if(student) {
-          username = data.name.first[0] + data.name.first[1] + data.name.last;
+          newUser.username = (line[header.indexOf('First')].substr(0,2) + line[header.indexOf('Last')]).toLowerCase();
         }
-        data.username = username;
 
-        var newStudent = new Student(data);
-        newStudent.save(function(err) {
-          if(err) { res.send(err); }
-          count--;
-          students.push(newStudent);
-          if(count === 0) {
-            return res.json(students);
-          }
+        newUser.save(function(err) {
+          if (err) { res.send(err); }
+          newStudent.save(function(err) {
+            if (err) { res.send(err); }
+            newUser.populate('data', '-_user -name -submit',  function(err, popUser) {
+              if (err) { res.send(err); }
+              count--;
+              students.push(popUser);
+              if(count === 0) {
+                return res.json(students);
+              }
+            });
+          });
         });
 
       });
@@ -73,53 +87,72 @@ var students = {
   },
 
   getAll: function(req, res) {
-    Student.find(function(err, students) {
+    User.find({ access: 'student' },function(err, students) {
       if(err) { res.send(err); }
-      res.json(students);
+      User.populate(students, { path:'data', select:'-_user -name -submit' }, function(err, popStudents) {
+        if(err) { res.send(err); }
+        res.json(popStudents);
+      });
     });
   },
 
   getOne: function(req, res) {
-    Student.findById(req.params.student_id, function(err, student) {
+    User.findById(req.params.student_id, function(err, user) {
       if(err) { res.send(err); }
-      res.json(student);
+      User.populate(user, { path:'data', select:'-_user -name -submit' }, function(err, user) {
+        res.json(user);
+      });
     });
   },
 
   update: function(req, res) {
-    Student.findById(req.params.student_id, function(err, student) {
+    User.findById(req.params.student_id, function(err, user) {
       if (err) { res.send(err); }
-      if (req.body.name && req.body.name.first)   { student.name.first    = req.body.name.first; }
-      if (req.body.name && req.body.name.last)    { student.name.last     = req.body.name.last; }
-      if (req.body.username)                      { student.username      = req.body.username; }
-      if (req.body.grade)                         { student.grade         = req.body.grade; }
-      if (req.body.required)                     { student.required      = req.body.required; }
-      if (req.body.pass && req.body.pass.student) { student.pass.student  = req.body.pass.student; }
-      if (req.body.pass && req.body.pass.parent)  { student.pass.parent   = req.body.pass.parent; }
-      if (req.body.electives)                     { student.electives     = req.body.electives; }
+      Student.findById(user.data, function(err, student) {
+        if (err) { res.send(err); }
 
-      if (req.body.list)                          { student.list          = req.body.list;
-                                                    student.submit        = new Date(); }
+        if (req.body.name && req.body.name.first)   { user.name.first       = req.body.name.first; }
+        if (req.body.name && req.body.name.last)    { user.name.last        = req.body.name.last; }
+        if (req.body.username)                      { user.username         = req.body.username; }
+        if (req.body.password)                      { user.password         = req.body.password; }
 
-      student.save(function(err) {
-        if(err) { res.send(err); }
-        if (req.isAuthenticated()) {
-          var studentObj = student.toObject();
-          delete studentObj.pass;
-          res.json(studentObj);
-        } else {
-          res.json(student);
+        if (req.body.data) {
+          if (req.body.data.grade)                  { student.grade         = req.body.data.grade; }
+          if (req.body.data.required)               { student.required      = req.body.data.required; }
+          if (req.body.data.authPassword)           { student.authPassword  = req.body.data.authPassword; }
+          if (req.body.data.electives)              { student.electives     = req.body.data.electives; }
+
+          if (req.body.data.list)                   { student.list          = req.body.data.list; }
+          if (req.body.data.submit)                 { student.submit        = new Date(); }
         }
+
+        user.save(function(err) {
+          if(err) { res.send(err); }
+          student.save(function(err) {
+            if (err) { res.send(err); }
+            var select = '-_user -name -submit';
+            if (req.isAuthenticated() && req.user.access === 'student') {
+                select += ' -authPassword';
+            }
+            User.populate(user, {path:'data',select:select}, function(err, user) {
+              res.json(user);
+            });
+          });
+        });
       });
     });
   },
 
   delete: function(req, res) {
-    Student.remove({
-      _id: req.params.student_id
-    }, function(err, student) {
-      if(err) { res.send(err); }
-      res.json(student);
+    User.findById(req.params.student_id, function(err, user) {
+      if (err) { res.send(err); }
+      Student.remove({ _id: user.data }, function(err) {
+        if(err) { res.send(err); }
+        User.remove({ _id: req.params.student_id }, function(err) {
+          if (err) { res.send(err); }
+          res.json({ message: 'User '+user.username+' successfully removed.' });
+        });
+      });
     });
   }
 };

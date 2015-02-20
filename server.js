@@ -10,7 +10,7 @@ var mongoose      = require('mongoose');
 var router        = require('./rest-server/routes/router');
 
 mongoose.connect('mongodb://dbadmin:zxcvbn@ds041167.mongolab.com:41167/electives-app');
-var User          = require('./rest-server/models/student');
+var User          = require('./rest-server/models/user');
 //Config passport
 require('./rest-server/config/passport')(passport, User, LocalStrategy);
 var authRouter    = require('./rest-server/routes/authentication')(passport);

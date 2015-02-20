@@ -27,7 +27,7 @@
 
     vm.gradeFilter = function(val) {
       var name = (val.name.first + ' ' + val.name.last).toLowerCase();
-      if(!(vm.show6 && val.grade === 6) && !(vm.show7 && val.grade === 7) && !(vm.show8 && val.grade === 8) || name.indexOf(vm.search.toLowerCase()) === -1) {
+      if(!(vm.show6 && val.data.grade === 6) && !(vm.show7 && val.data.grade === 7) && !(vm.show8 && val.data.grade === 8) || name.indexOf(vm.search.toLowerCase()) === -1) {
         return false;
       }
       return true;

@@ -6,14 +6,11 @@ module.exports = function(passport) {
 
   router.route('/login')
     .post(function(req, res) {
-      passport.authenticate('local', function(err, user) {
+      passport.authenticate('local', function(err, user, info) {
         if (err) { return res.send(err); }
-        if (!user) { return res.json({ message: 'Invalid user' }); }
+        if (!user) { return res.json(info); }
         req.logIn(user, function(err) {
           if (err) { return res.send(err); }
-
-          var userObj = user.toObject();
-          delete userObj.pass;
           return res.json(user);
         });
       })(req, res);
@@ -28,9 +25,7 @@ module.exports = function(passport) {
   router.route('/profile')
     .post(function(req, res) {
       if (req.isAuthenticated()) {
-        var userObj = req.user.toObject();
-        delete userObj.pass;
-        return res.json(userObj);
+        return res.json(req.user);
       } else {
         return res.json({ message: 'Not logged in' });
       }

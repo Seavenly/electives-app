@@ -51,7 +51,8 @@
 
     function remove(id) {
       $http.delete('http://localhost:8080/api/student/' + id)
-        .success(function() {
+        .success(function(data) {
+          console.log(data.message);
           var index = _.findIndex(studentsObj.data, { _id: id });
           studentsObj.data.splice(index, 1);
         });

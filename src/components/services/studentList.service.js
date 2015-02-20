@@ -40,7 +40,7 @@
     // 3.  elective available in listed quarter
     // 4.  8th graders need required elective(s) if not complete
     function validateList(currUser) {
-      var userList = currUser.list;
+      var userList = currUser.data.list;
       var errors = [];
 
       var requiredElectives = _.pluck(_.filter(electives.data, { required: true }), '_id');
@@ -55,7 +55,7 @@
         for (var i in userList[quarter]) {
           var elective = electives.findById(userList[quarter][i]);
           // 2.
-          if (_.indexOf(elective.grades, currUser.grade) === -1) {
+          if (_.indexOf(elective.grades, currUser.data.grade) === -1) {
             errors.push('invalid grade: '+currUser.grade+' ('+elective.name+' '+elective.grades+')');
           }
           // 3.
@@ -82,14 +82,16 @@
 
     function save() {
       var currUser = user.currentUser();
-      currUser.list.q1 = _.pluck(_.sortBy(list[0], 'pref'), '_id');
-      currUser.list.q2 = _.pluck(_.sortBy(list[1], 'pref'), '_id');
-      currUser.list.q3 = _.pluck(_.sortBy(list[2], 'pref'), '_id');
-      currUser.list.q4 = _.pluck(_.sortBy(list[3], 'pref'), '_id');
+      currUser.data.list.q1 = _.pluck(_.sortBy(list[0], 'pref'), '_id');
+      currUser.data.list.q2 = _.pluck(_.sortBy(list[1], 'pref'), '_id');
+      currUser.data.list.q3 = _.pluck(_.sortBy(list[2], 'pref'), '_id');
+      currUser.data.list.q4 = _.pluck(_.sortBy(list[3], 'pref'), '_id');
 
       if (validateList(currUser)) {
-        $http.put('http://localhost:8080/api/student/' + currUser._id, { list: currUser.list})
+        console.log('list:', currUser.data.list);
+        $http.put('http://localhost:8080/api/student/' + currUser._id, { data: { list: currUser.data.list }})
           .success(function(data) {
+            console.log(data);
             _.assign(currUser, data);
           });
       }
@@ -100,12 +102,13 @@
       $q.all([user.load(), electives.load()]).then(function(data) {
         var currUser = data[0];
         if(currUser) {
+          console.log(currUser);
           for (var i in list) {
-            for (var j in currUser.list['q'+(+i+1)]) {
+            for (var j in currUser.data.list['q'+(+i+1)]) {
               list[i].push({
-                _id: currUser.list['q'+(+i+1)][j],
+                _id: currUser.data.list['q'+(+i+1)][j],
                 pref: +j+1,
-                name: electives.findById(currUser.list['q'+(+i+1)][j]).name,
+                name: electives.findById(currUser.data.list['q'+(+i+1)][j]).name,
               });
             }
           }

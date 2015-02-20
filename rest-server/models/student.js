@@ -2,15 +2,12 @@ var mongoose  = require('mongoose');
 var Schema    = mongoose.Schema;
 
 var StudentSchema = new Schema({
+  _user: { type: Schema.Types.ObjectId, ref: 'User' },
   name: {
     first: String,
     last: String
   },
-  pass: {
-    student: String,
-    parent: String
-  },
-  username: String,
+  authPassword: String,
   grade: Number,
   required: [String], //required electives taken
   submit: Date,

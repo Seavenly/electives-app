@@ -96,14 +96,14 @@
       <div class="col-xs-4"><h4>First</h4></div>
       <div class="col-xs-2"><h4>Grade</h4></div>
     </div>
-    <div class="row" ng-class="{ 'bg-danger':vm.checkbox[student._id] }" ng-repeat-start="student in vm.students.data | filter: vm.gradeFilter | orderBy: ['grade', 'name.last', 'name.first'] | startFrom: vm.start | limitTo: vm.limit track by student._id">
+    <div class="row" ng-class="{ 'bg-danger':vm.checkbox[student._id] }" ng-repeat-start="student in vm.students.data | filter: vm.gradeFilter | orderBy: ['data.grade', 'name.last', 'name.first'] | startFrom: vm.start | limitTo: vm.limit track by student._id">
       <div class="col-xs-1">
         <input type="checkbox" ng-model="vm.checkbox[student._id]" ng-init="vm.checkbox[student._id] = false">
       </div>
       <div class="clearfix click" ng-click="vm.toggleEdit($index, student)">
         <div class="col-xs-4">{{ student.name.last }}</div>
         <div class="col-xs-4">{{ student.name.first }}</div>
-        <div class="col-xs-2">{{ student.grade }}</div>
+        <div class="col-xs-2">{{ student.data.grade }}</div>
         <div class="col-xs-1">
           <button class="btn btn-default btn-xs">Edit</button>
         </div>
@@ -138,14 +138,14 @@
           <div class="form-group">
             <label class="col-xs-2 control-label">Student Password</label>
             <div class="col-xs-5">
-              <input type="text" class="form-control" ng-model="vm.currentEdit.pass.student">
+              <input type="text" class="form-control" ng-model="vm.currentEdit.password">
             </div>
           </div>
 
           <div class="form-group">
             <label class="col-xs-2 control-label">Parent Password</label>
             <div class="col-xs-5">
-              <input type="text" class="form-control" ng-model="vm.currentEdit.pass.parent">
+              <input type="text" class="form-control" ng-model="vm.currentEdit.data.authPassword">
             </div>
           </div>
 
@@ -153,18 +153,18 @@
             <label class="col-xs-2 control-label">Grade</label>
             <div class="col-xs-5">
               <label class="radio-inline">
-                <input type="radio" name="gradeRadio" ng-model="vm.currentEdit.grade" value="6">6
+                <input type="radio" name="gradeRadio" ng-model="vm.currentEdit.data.grade" value="6">6
               </label>
               <label class="radio-inline">
-                <input type="radio" name="gradeRadio" ng-model="vm.currentEdit.grade" value="7">7
+                <input type="radio" name="gradeRadio" ng-model="vm.currentEdit.data.grade" value="7">7
               </label>
               <label class="radio-inline">
-                <input type="radio" name="gradeRadio" ng-model="vm.currentEdit.grade" value="8">8
+                <input type="radio" name="gradeRadio" ng-model="vm.currentEdit.data.grade" value="8">8
               </label>
             </div>
           </div>
 
-          <div class="form-group">
+          <!-- <div class="form-group">
             <div class="col-xs-5 col-xs-offset-2">
               <div class="checkbox">
                 <label>
@@ -172,7 +172,7 @@
                 </label>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="col-xs-offset-2">
             <button type="submit" class="btn btn-default">Save</button>
