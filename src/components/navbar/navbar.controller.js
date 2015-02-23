@@ -21,7 +21,11 @@
     };
 
     vm.isLoggedIn = function() {
-      return user.currentUser() !== null;
+      if (user.currentUser()) {
+        return user.currentUser().access;
+      } else {
+        return false;
+      }
     };
 
     authEvents.student.onUnauth(function() {

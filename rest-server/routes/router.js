@@ -3,9 +3,10 @@
 var router    = require('express').Router();
 var students  = require('./students');
 var electives = require('./electives');
+var admins    = require('./admins');
 
 
-//STUDENTS
+//  STUDENTS
 router.route('/students')
   .post(function(req, res) {
     students.createAll(req, res);
@@ -31,7 +32,7 @@ router.route('/student/:student_id')
   });
 
 
-//ELECTIVES
+//  ELECTIVES
 router.route('/electives')
   .post(function(req, res) {
     electives.create(req, res);
@@ -46,6 +47,23 @@ router.route('/electives/:elective_id')
   })
   .delete(function(req, res) {
     electives.delete(req, res);
+  });
+
+//  ADMINS
+router.route('/admins')
+  .post(function(req, res) {
+    admins.create(req, res);
+  })
+  .get(function(req, res) {
+    admins.getAll(req, res);
+  });
+
+router.route('/admins/:user_id')
+  .put(function(req, res) {
+    admins.update(req, res);
+  })
+  .delete(function(req, res) {
+    admins.delete(req, res);
   });
 
 module.exports = router;

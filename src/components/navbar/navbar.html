@@ -19,9 +19,10 @@
     <ul class="nav navbar-nav navbar-right">
       <li ng-class="nav.isActive('home')"><a ui-sref="home" href>Home</a></li>
       <li ng-class="nav.isActive('electivesList')"><a ui-sref="electivesList" href>Electives List</a></li>
-      <li ng-if="nav.isLoggedIn()" ng-class="nav.isActive('studentList')"><a ui-sref="studentList" href>Student List</a></li>
-      <li ng-class="nav.isActive('editStudents')"><a ui-sref="editStudents" href>Edit Students (admin)</a></li>
-      <li ng-class="nav.isActive('editElectives')"><a ui-sref="editElectives" href>Edit Electives (admin)</a></li>
+      <li ng-if="nav.isLoggedIn() === 'student'" ng-class="nav.isActive('studentList')"><a ui-sref="studentList" href>Your List</a></li>
+      <li ng-if="nav.isLoggedIn() === 'admin'" ng-class="nav.isActive('editStudents')"><a ui-sref="editStudents" href>Students</a></li>
+      <li ng-if="nav.isLoggedIn() === 'admin'" ng-class="nav.isActive('editElectives')"><a ui-sref="editElectives" href>Electives</a></li>
+      <li ng-if="nav.isLoggedIn() === 'admin'" ng-class="nav.isActive('editAdmins')"><a ui-sref="editAdmins" href>Admins</a></li>
     </ul>
   </div>
 </nav>

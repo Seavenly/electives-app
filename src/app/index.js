@@ -33,16 +33,27 @@ angular.module('electivesApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize
         url: '/admin/edit_electives',
         templateUrl: 'app/admin/edit_electives.html',
         controller: 'EditElectivesCtrl as vm'
+      })
+      .state('editAdmins', {
+        url: '/admin/edit_admins',
+        templateUrl: 'app/admin/edit_admins.html',
+        controller: 'EditAdminsCtrl as vm'
       });
 
     $urlRouterProvider.otherwise('/');
   })
-  .run(['$q', 'user', 'electives', 'students', 'studentList',
-  function($q, user, electives, students, studentList) {
+  .run(['$q', 'user', 'electives', 'students', 'admins', 'studentList',
+  function($q, user, electives, students, admins, studentList) {
     //StudentList service relies on electives and user service
     $q.all([electives.load(), user.load()]).then(function(data) {
-      if(data[1]){ studentList.load(); }
+      if(data[1]){
+        if (data[1].access === 'student') {
+          studentList.load();
+        } else if (data[1].access === 'admin') {
+          students.load();
+          admins.load();
+        }
+      }
     });
-    students.load();
   }])
 ;

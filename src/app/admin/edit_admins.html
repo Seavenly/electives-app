@@ -1,0 +1,129 @@
+<div class="container">
+
+  <!-- CREATE ADMIN -->
+  <div class="row">
+    <div class="col-xs-8 col-xs-offset-2">
+      <form class="form-horizontal" ng-submit="vm.setUser(false)">
+
+        <div class="form-group">
+          <label for="firstname" class="col-xs-3 control-label">First Name</label>
+          <div class="col-xs-9">
+            <input id="firstname" type="text" class="form-control" ng-model="vm.form.name.first">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastname" class="col-xs-3 control-label">Last Name</label>
+          <div class="col-xs-9">
+            <input id="lastname" type="text" class="form-control" ng-model="vm.form.name.last">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="username" class="col-xs-3 control-label">Username</label>
+          <div class="col-xs-9">
+            <input id="username" type="text" class="form-control" ng-model="vm.form.username">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="col-xs-3 control-label">Password</label>
+          <div class="col-xs-9">
+            <input id="password" type="password" class="form-control" ng-model="vm.form.password">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password-check" class="col-xs-3 control-label"></label>
+          <div class="col-xs-9">
+            <input id="password-check" type="password" class="form-control" placeholder="Retype password" ng-model="vm.form.passwordCheck">
+          </div>
+        </div>
+
+        <div class="col-xs-12">
+          <button type="submit" class="btn btn-default pull-right">Add Admin</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- TABLE OPTIONS -->
+  <div class="row">
+    <div class="col-xs-12">
+
+      <div class="btn-group btn-group-sm" role="group" aria-label="...">
+        <button class="btn btn-danger" ng-click="vm.deleteElectives()">Delete</button>
+        <button class="btn btn-default" ng-click="vm.toggleSelectAll()">
+          <span ng-hide="vm.allSelected">Select</span><span ng-show="vm.allSelected">Deselect</span> All
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-div">
+    <div class="row">
+      <div class="col-xs-10 col-xs-offset-1"><h4>Name</h4></div>
+    </div>
+    <div class="row" ng-class="{ 'bg-danger':vm.checkbox[user._id] }" ng-repeat-start="user in vm.admins.data | orderBy: 'name' track by user._id">
+      <div class="col-xs-1">
+        <input type="checkbox" ng-model="vm.checkbox[user._id]" ng-init="vm.checkbox[user._id] = false">
+      </div>
+      <div class="clearfix click" ng-click="vm.toggleEdit($index, user)">
+        <div class="col-xs-10">{{ user.name.first+' '+user.name.last }}</div>
+        <div class="col-xs-1">
+          <button class="btn btn-default btn-xs">Edit</button>
+        </div>
+      </div>
+    </div>
+    <div class="row edit-form" ng-if="vm.currentEdit.index === $index" ng-repeat-end>
+      <div class="col-xs-12">
+        <form class="form-horizontal" ng-submit="vm.setUser(true)">
+
+          <div class="form-group">
+            <label class="col-xs-2 control-label">First Name</label>
+            <div class="col-xs-5">
+              <input type="text" class="form-control" ng-model="vm.currentEdit.name.first">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-xs-2 control-label">Last Name</label>
+            <div class="col-xs-5">
+              <input type="text" class="form-control" ng-model="vm.currentEdit.name.last">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-xs-2 control-label">Username</label>
+            <div class="col-xs-5">
+              <input type="text" class="form-control" ng-model="vm.currentEdit.username">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-xs-2 control-label">Reset Password</label>
+            <div class="col-xs-5">
+              <input type="password" class="form-control" ng-model="vm.currentEdit.password">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-xs-2 control-label"></label>
+            <div class="col-xs-5">
+              <input type="password" class="form-control" placeholder="Retype password" ng-model="vm.currentEdit.passwordCheck">
+            </div>
+          </div>
+
+          <div class="col-xs-offset-2">
+            <button type="submit" class="btn btn-default">Save</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
