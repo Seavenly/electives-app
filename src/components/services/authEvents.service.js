@@ -38,13 +38,13 @@
     return {
       student: {
         auth: authStudent,
-        unAuth: unauthStudent,
+        unauth: unauthStudent,
         onAuth: onAuthStudent,
         onUnauth: onUnauthStudent
       },
       admin: {
         auth: authAdmin,
-        unAuth: unauthAdmin,
+        unauth: unauthAdmin,
         onAuth: onAuthAdmin,
         onUnauth: onUnauthAdmin,
       }

@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  function students($window, $http, $q) {
+  function students($window, $http, $q, authEvents) {
 
     function load() {
       var deferred = $q.defer();
@@ -58,6 +58,13 @@
         });
     }
 
+    authEvents.admin.onAuth(function() {
+      load();
+    });
+    authEvents.admin.onUnauth(function() {
+      studentsObj.data = null;
+    });
+
     var studentsObj = {
       data: null,
       load: load,
@@ -69,6 +76,6 @@
   }
 
   angular.module('electivesApp')
-    .factory('students', ['$window', '$http', '$q', students]);
+    .factory('students', ['$window', '$http', '$q', 'authEvents', students]);
 
 })();

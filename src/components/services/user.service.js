@@ -41,7 +41,9 @@
         .success(function(data) {
           if (data.hasOwnProperty('_id')) {
             currUser = data;
-            authEvents.student.auth();
+            if (currUser.access === 'student') { authEvents.student.auth(); }
+            else if (currUser.access === 'admin') { authEvents.admin.auth(); }
+
           }
         });
     }
@@ -49,8 +51,9 @@
     function logout() {
       $http.post('http://localhost:8080/auth/logout')
         .success(function() {
+          if (currUser.access === 'student') { authEvents.student.unauth(); }
+          else if (currUser.access === 'admin') { authEvents.admin.unauth(); }
           currUser = null;
-          authEvents.student.unauth();
         });
     }
 

@@ -70,7 +70,7 @@
       // 4.
       var missing = _.difference(missingRequired, addedRequired);
       missing = _.map(missing, function(id) { return electives.findById(id).name; });
-      if (missing.length > 0 && currUser.grade === 8) {
+      if (missing.length > 0 && currUser.data.grade === 8) {
         errors.push('The following elective(s) are required: '+missing.toString());
       }
       if (errors.length > 0) {
