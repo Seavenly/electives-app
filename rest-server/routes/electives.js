@@ -10,9 +10,7 @@ var electives = {
       if (elective) { return res.json({ message: 'An elective by that name aready exists' }); }
 
       var startPop = {
-        current: 0,
-        grade7: 0,
-        grade8: 0,
+        current: [0, 0, 0],
         students: []
       };
 
@@ -24,10 +22,8 @@ var electives = {
         grades:       req.body.grades,
         required:     req.body.required,
         cap:          req.body.cap,
-        quarters: {
-          available:     req.body.quarters.available,
-          q:             [startPop, startPop, startPop, startPop]
-        }
+        available:    req.body.available,
+        quartersdata: [startPop, startPop, startPop, startPop]
       });
 
       newElective.save(function(err) {
@@ -57,7 +53,7 @@ var electives = {
       elective.grades             = req.body.grades;
       elective.required           = req.body.required;
       elective.cap                = req.body.cap;
-      elective.quarters.available = req.body.quarters.available;
+      elective.available          = req.body.available;
 
       elective.save(function(err) {
         if (err) { res.send(err); }
@@ -73,7 +69,7 @@ var electives = {
       if (err) { res.send(err); }
       res.json(elective);
     });
-  }
+  },
 
 };
 

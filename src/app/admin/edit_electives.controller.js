@@ -38,11 +38,9 @@
         images:       [form.image],
         semester:     (form.semester === 'true'),
         grades:       grades,
-        required:     form.required, 
+        required:     form.required,
         cap:          form.cap,
-        quarters: {
-          available:     quarters
-        }
+        available:    quarters
       };
       if(!exists) {
         electives.add(elective);
@@ -59,8 +57,8 @@
             quarters = {};
         vm.currentEdit = angular.copy(elective);
         vm.currentEdit.index = index;
-        for(var q in vm.currentEdit.quarters.available) {
-         quarters[vm.currentEdit.quarters.available[q]] = true;
+        for(var q in vm.currentEdit.available) {
+         quarters[vm.currentEdit.available[q]] = true;
         }
         for(var g in vm.currentEdit.grades) {
           grades[vm.currentEdit.grades[g]] = true;
@@ -74,7 +72,6 @@
 
     vm.allSelected = false;
     vm.toggleSelectAll = function() {
-      console.log('ALL:', vm.data);
       vm.allSelected = !vm.allSelected;
       for(var key in vm.checkbox) {
         vm.checkbox[key] = vm.allSelected;
