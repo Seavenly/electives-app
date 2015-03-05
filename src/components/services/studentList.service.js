@@ -59,7 +59,7 @@
             errors.push('invalid grade: '+currUser.grade+' ('+elective.name+' '+elective.grades+')');
           }
           // 3.
-          if (_.indexOf(elective.quarters.available, +quarter[1]) === -1) {
+          if (_.indexOf(elective.available, +quarter[1]) === -1) {
             errors.push('invalid quarter: '+quarter[1]+' ('+elective.name+' '+elective.quarters.available+')');
           }
           if (_.indexOf(missingRequired, elective._id) !== -1) {
@@ -89,7 +89,7 @@
 
       if (validateList(currUser)) {
         console.log('list:', currUser.data.list);
-        $http.put('http://localhost:8080/api/student/' + currUser._id, { data: { list: currUser.data.list }})
+        $http.put('http://localhost:8080/api/student/' + currUser._id, { data: { list: currUser.data.list, submit: true }})
           .success(function(data) {
             console.log(data);
             _.assign(currUser, data);

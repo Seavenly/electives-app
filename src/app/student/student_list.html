@@ -6,7 +6,7 @@
       <div class="list-wrapper row">
         <div class="col-sm-6" ng-repeat-start="i in [0,1,2,3]">
           <h2>Quarter {{ i+1 }}</h2>
-          <div ng-repeat="elective in vm.electives.data | quarter:i+1">
+          <div ng-repeat="elective in ::vm.electives.data | quarter:i+1 | orderBy:'semester' track by elective._id">
             <select ng-model="vm.model[i][elective._id]"
                     ng-change="vm.updateList(i, elective)"
                     ng-init="vm.model[i][elective._id] = vm.getPref(i, elective._id)">

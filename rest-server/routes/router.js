@@ -4,6 +4,7 @@ var router    = require('express').Router();
 var students  = require('./students');
 var electives = require('./electives');
 var admins    = require('./admins');
+var actions   = require('./actions');
 
 
 //  STUDENTS
@@ -64,6 +65,12 @@ router.route('/admins/:user_id')
   })
   .delete(function(req, res) {
     admins.delete(req, res);
+  });
+
+// ACTIONS
+router.route('/actions/:target/:action/:param?')
+  .get(function(req, res) {
+    actions[req.params.target][req.params.action](req, res);
   });
 
 module.exports = router;

@@ -20,7 +20,8 @@
   "white": true,
   "validthis": true,
   "globals": {
-    "_": false,
+    "_": true,
+    "Promise": true,
     "angular": false,
     // Angular Mocks
     "inject": false,
