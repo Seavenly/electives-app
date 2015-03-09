@@ -58,16 +58,14 @@
         });
     }
 
-    authEvents.admin.onAuth(function() {
-      load();
-    });
-    authEvents.admin.onUnauth(function() {
+    function unload() {
       studentsObj.data = null;
-    });
+    }
 
     var studentsObj = {
       data: null,
       load: load,
+      unload: unload,
       addAll: addAll,
       update: update,
       remove: remove

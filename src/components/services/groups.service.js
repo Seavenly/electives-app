@@ -43,9 +43,14 @@
         });
     }
 
+    function unload() {
+      groupsObj.data = null;
+    }
+
     var groupsObj = {
       data: null,
       load: load,
+      unload: unload,
       add: add,
       update: update,
       remove: remove

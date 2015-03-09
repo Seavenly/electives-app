@@ -28,6 +28,9 @@
       }
     };
 
+    authEvents.admin.onUnauth(function() {
+      $state.go('home');
+    });
     authEvents.student.onUnauth(function() {
       $state.go('home');
     });

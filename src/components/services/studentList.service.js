@@ -121,16 +121,14 @@
       return deferred.promise;
     }
 
-    authEvents.student.onAuth(function() {
-      load();
-    });
-    authEvents.student.onUnauth(function() {
+    function unload() {
       list = [ [], [], [], [] ];
-    });
+    }
 
     return {
       getList: getList,
       load: load,
+      unload: unload,
       set: set,
       save: save,
       getPref: getPref

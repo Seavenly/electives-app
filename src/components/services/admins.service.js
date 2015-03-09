@@ -43,16 +43,14 @@
         });
      }
 
-     authEvents.admin.onAuth(function() {
-       load();
-     });
-     authEvents.admin.onUnauth(function() {
+     function unload() {
        adminsObj.data = null;
-     });
+     }
 
      var adminsObj = {
        data: null,
        load: load,
+       unload: unload,
        create: create,
        update: update,
        remove: remove

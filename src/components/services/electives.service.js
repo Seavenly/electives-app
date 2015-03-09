@@ -45,9 +45,14 @@
       return _.find(electivesObj.data, { _id: id });
     }
 
+    function unload() {
+      electivesObj.data = null;
+    }
+
     var electivesObj = {
       data: null,
       load: load,
+      unload: unload,
       add: add,
       update: update,
       delete: remove,
