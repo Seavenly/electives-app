@@ -38,12 +38,17 @@ angular.module('electivesApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize
         url: '/admin/edit_admins',
         templateUrl: 'app/admin/edit_admins.html',
         controller: 'EditAdminsCtrl as vm'
+      })
+      .state('editGroups', {
+        url: '/admin/edit_groups',
+        templateUrl: 'app/admin/edit_groups.html',
+        controller: 'EditGroupsCtrl as vm'
       });
 
     $urlRouterProvider.otherwise('/');
   })
-  .run(['$q', 'user', 'electives', 'students', 'admins', 'studentList',
-  function($q, user, electives, students, admins, studentList) {
+  .run(['$q', 'user', 'electives', 'groups', 'students', 'admins', 'studentList',
+  function($q, user, electives, groups, students, admins, studentList) {
     //StudentList service relies on electives and user service
     $q.all([electives.load(), user.load()]).then(function(data) {
       if(data[1]){
@@ -51,6 +56,7 @@ angular.module('electivesApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize
           studentList.load();
         } else if (data[1].access === 'admin') {
           students.load();
+          groups.load();
           admins.load();
         }
       }

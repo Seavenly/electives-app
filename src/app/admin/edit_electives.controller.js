@@ -21,9 +21,8 @@
       var quarters  = [];
       var grades    = [];
       var form = vm.form;
-      if(exists) {
-        form = vm.currentEdit;
-      }
+      if (exists) { form = vm.currentEdit; }
+
       for(var quarter in form.quarters) {
         if(form.quarters[quarter] === true) { quarters.push(+quarter); }
       }
@@ -45,8 +44,7 @@
       if(!exists) {
         electives.add(elective);
         setForm();
-      }
-      else { electives.update(elective); }
+      } else { electives.update(elective); }
     };
 
     vm.toggleEdit = function(index, elective) {

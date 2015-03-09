@@ -1,10 +1,11 @@
 'use strict';
 
-var router    = require('express').Router();
-var students  = require('./students');
-var electives = require('./electives');
-var admins    = require('./admins');
-var actions   = require('./actions');
+var router          = require('express').Router();
+var students        = require('./students');
+var electives       = require('./electives');
+var electiveGroups  = require('./electiveGroups');
+var admins          = require('./admins');
+var actions         = require('./actions');
 
 
 //  STUDENTS
@@ -48,6 +49,24 @@ router.route('/electives/:elective_id')
   })
   .delete(function(req, res) {
     electives.delete(req, res);
+  });
+
+
+// ELECTIVE GROUPS
+router.route('/groups')
+  .post(function(req, res) {
+    electiveGroups.create(req, res);
+  })
+  .get(function(req, res) {
+    electiveGroups.getAll(req, res);
+  });
+
+router.route('/groups/:group_id')
+  .put(function(req, res) {
+    electiveGroups.update(req, res);
+  })
+  .delete(function(req, res) {
+    electiveGroups.delete(req, res);
   });
 
 //  ADMINS

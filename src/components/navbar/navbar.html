@@ -22,6 +22,7 @@
       <li ng-if="nav.isLoggedIn() === 'student'" ng-class="nav.isActive('studentList')"><a ui-sref="studentList" href>Your List</a></li>
       <li ng-if="nav.isLoggedIn() === 'admin'" ng-class="nav.isActive('editStudents')"><a ui-sref="editStudents" href>Students</a></li>
       <li ng-if="nav.isLoggedIn() === 'admin'" ng-class="nav.isActive('editElectives')"><a ui-sref="editElectives" href>Electives</a></li>
+      <li ng-if="nav.isLoggedIn() === 'admin'" ng-class="nav.isActive('editGroups')"><a ui-sref="editGroups" href>Elective Groups</a></li>
       <li ng-if="nav.isLoggedIn() === 'admin'" ng-class="nav.isActive('editAdmins')"><a ui-sref="editAdmins" href>Admins</a></li>
     </ul>
   </div>
