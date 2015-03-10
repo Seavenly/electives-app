@@ -42,6 +42,13 @@
       }
     }
 
+    function create(student) {
+      $http.post('http://localhost:8080/api/student', student)
+        .success(function(data) {
+          studentsObj.data = studentsObj.data.concat(data);
+        });
+    }
+
     function update(data) {
       $http.put('http://localhost:8080/api/student/' + data._id, data)
         .success(function(data) {
@@ -67,6 +74,7 @@
       load: load,
       unload: unload,
       addAll: addAll,
+      create: create,
       update: update,
       remove: remove
     };

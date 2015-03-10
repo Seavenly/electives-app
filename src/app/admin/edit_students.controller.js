@@ -42,8 +42,15 @@
       }
     };
 
-    vm.updateStudent = function() {
-      students.update(vm.currentEdit);
+    vm.setStudent = function(exists) {
+      var form = vm.form;
+      if (exists) {
+        form = vm.currentEdit;
+        students.update(form);
+      } else {
+        students.create(form);
+        vm.form = {};
+      }
     };
 
     vm.allSelected = false;

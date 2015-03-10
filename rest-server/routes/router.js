@@ -19,7 +19,7 @@ router.route('/students')
 
 router.route('/student')
   .post(function(req, res) {
-    students.createOne(req, res);
+    students.create(req, res);
   });
 
 router.route('/student/:student_id')

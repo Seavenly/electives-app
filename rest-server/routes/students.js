@@ -62,25 +62,42 @@ var students = {
     });
   },
 
-  createOne: function(req, res) {
-    var student = new Student();
+  create: function(req, res) {
+    var newUser = new User({
+      name: {
+        first:    req.body.name.first,
+        last:     req.body.name.last
+      },
+      username:   (req.body.name.first[0] + req.body.name.last).toLowerCase(),
+      password:   generatePassword(),
+      access:     'student'
+    });
 
-    student.username      = (req.body.name.first[0] + req.body.name.last).toLowerCase();
-    Student.findOne({ username: student.username }, function(err, student) {
-      if(err) { res.send(err); }
-      if(student) { return res.json({ message: 'Student with username "' + student.username + '" already exists.' }); }
+    var newStudent = new Student({
+      name: {
+        first: req.body.name.first,
+        last:   req.body.name.last
+      },
+      grade: req.body.grade,
+      authPassword: generatePassword(3, false)
+    });
 
-      student.name.first    = req.body.name.first;
-      student.name.last     = req.body.name.last;
-      student.grade         = req.body.grade;
-      student.required      = [];
+    newUser.data = newStudent._id;
+    newStudent._user = newUser._id;
 
-      student.pass.student  = generatePassword();
-      student.pass.parent   = generatePassword(3, false);
+    User.findOne({ username: newUser.username }, function(err, user) {
+      if(err) { return res.send(err); }
+      if(!!user) { newUser.username = (req.body.name.first[0] + req.body.name.first[1] + req.body.name.last).toLowerCase(); }
 
-      student.save(function(err) {
-        if(err) { res.send(err); }
-        res.json({ message: 'Student created: ' + student.username });
+      newUser.save(function(err) {
+        if (err) { res.send(err); }
+        newStudent.save(function(err) {
+          if (err) { res.send(err); }
+          newUser.populate('data', '-_user -name -submit',  function(err, popUser) {
+            if (err) { res.send(err); }
+            return res.json(popUser);
+          });
+        });
       });
 
     });
