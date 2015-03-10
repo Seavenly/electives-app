@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  function EditStudentsCtrl(students, $filter, $scope) {
+  function EditStudentsCtrl(students, electives, $filter, $scope) {
     var vm = this;
 
     vm.limit = 10;
@@ -10,7 +10,9 @@
     vm.search = '';
     vm.show6 = vm.show7 = vm.show8 = true;
     vm.currentEdit = {};
+    vm.temp = {};
     vm.students = students;
+    vm.electives = electives;
 
     // Go to first page when user begins to search
     $scope.$watch(function() {
@@ -33,24 +35,69 @@
       return true;
     };
 
+    vm.requiredFilter = function(val) {
+      if (val.required) { return true; }
+      return false;
+    };
+
     vm.toggleEdit = function(index, student) {
       if (vm.currentEdit.index === index) {
         vm.currentEdit.index = null;
       } else {
         vm.currentEdit = angular.copy(student);
         vm.currentEdit.index = index;
+        vm.temp.required = 'default';
+        vm.currentEdit.data.required = _.map(vm.currentEdit.data.required, function(n) {
+          return _.find(vm.electives.data, {_id: n});
+        });
+        console.log(vm.currentEdit);
       }
     };
 
     vm.setStudent = function(exists) {
+      if (vm.studentsFile) { return students.addAll(vm.studentsFile); }
       var form = vm.form;
+      if (exists) { form = vm.currentEdit; }
+
+        var student = {
+          _id: form._id,
+          name: {
+            first: form.name.first,
+            last: form.name.last
+          },
+          data: {
+            grade: form.data.grade
+          }
+        };
+
       if (exists) {
-        form = vm.currentEdit;
-        students.update(form);
+        student.data.required = _.pluck(form.data.required, '_id');
+        console.log('update:', student);
+        students.update(student);
       } else {
-        students.create(form);
+        students.create(student);
         vm.form = {};
       }
+    };
+
+    vm.addRequired = function() {
+      var form = vm.currentEdit;
+      var check = _.find(form.data.required, function(n) {
+        return n._id === vm.temp.required;
+      });
+      if (form.elective !== 'default' && !check) {
+        form.data.required.push(_.find(electives.data, { _id: vm.temp.required }));
+      }
+      vm.temp.required = 'default';
+      console.log(form);
+    };
+
+    vm.removeRequired = function(elective) {
+      var form = vm.currentEdit;
+      var index = _.findIndex(form.data.required, function(n) {
+        return n._id === elective._id;
+      });
+      form.data.required.splice(index, 1);
     };
 
     vm.allSelected = false;
@@ -94,6 +141,6 @@
   }
 
   angular.module('electivesApp')
-    .controller('EditStudentsCtrl', ['students', '$filter', '$scope', EditStudentsCtrl]);
+    .controller('EditStudentsCtrl', ['students', 'electives', '$filter', '$scope', EditStudentsCtrl]);
 
 })();

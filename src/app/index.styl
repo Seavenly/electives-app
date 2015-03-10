@@ -15,6 +15,7 @@
   > .row
     position relative
     padding .6em 0 .6em
+    margin 0
     border-bottom 1px solid #ccc
     background-color white
     &:nth-child(2n-1)
@@ -28,8 +29,47 @@
       &:hover
         background-color #dbb
 
+.panel.table
+  > .list-group
+    > .list-group-item
+      &:first-child
+        background-color #eee
+      &:hover
+        background-color #f4f4f4
+      &.edit-form
+        &:hover
+          background-color white
+      &.bg-danger
+        background-color #f2dede
+        &:hover
+          background-color #dbb
+      .panel
+        .panel-body
+          background-color #f4f4f4
+
+.req-electives
+  border 1px solid #ccc
+  border-top none
+  .list-group-item
+    &:hover
+      background-color #ddf
+
+.input-group
+  .input-group-addon
+    label
+      margin-bottom 0
+
 img
   max-width 100%
+
+.center
+  text-align center
+  > *
+    display inline-block
+    margin 0
+
+.btn-selected
+  background-color #ddd
 
 .click
   cursor pointer

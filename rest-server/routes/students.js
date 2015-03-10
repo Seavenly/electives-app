@@ -78,7 +78,7 @@ var students = {
         first: req.body.name.first,
         last:   req.body.name.last
       },
-      grade: req.body.grade,
+      grade: req.body.data.grade,
       authPassword: generatePassword(3, false)
     });
 
@@ -124,9 +124,11 @@ var students = {
 
   update: function(req, res) {
     User.findById(req.params.student_id, function(err, user) {
-      if (err) { res.send(err); }
+      if (err) { return res.send(err); }
       Student.findById(user.data, function(err, student) {
-        if (err) { res.send(err); }
+        if (err) { return res.send(err); }
+
+        console.log(req.body);
 
         if (req.body.name && req.body.name.first)   { user.name.first       = req.body.name.first; }
         if (req.body.name && req.body.name.last)    { user.name.last        = req.body.name.last; }
@@ -144,14 +146,14 @@ var students = {
         }
 
         user.save(function(err) {
-          if(err) { res.send(err); }
+          if(err) { return res.send(err); }
           student.save(function(err) {
-            if (err) { res.send(err); }
+            if (err) { return res.send(err); }
             var select = '-_user -name -submit';
             if (req.isAuthenticated() && req.user.access === 'student') {
                 select += ' -authPassword';
             }
-            User.populate(user, {path:'data',select:select}, function(err, user) {
+            User.populate(user, {path:'data', select:select}, function(err, user) {
               res.json(user);
             });
           });
