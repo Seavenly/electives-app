@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  function students($window, $http, $q, authEvents) {
+  function students($window, $http, $q) {
 
     function load() {
       var deferred = $q.defer();
@@ -74,6 +74,6 @@
   }
 
   angular.module('electivesApp')
-    .factory('students', ['$window', '$http', '$q', 'authEvents', students]);
+    .factory('students', ['$window', '$http', '$q', students]);
 
 })();

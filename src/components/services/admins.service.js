@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  function admins($http, $q, authEvents) {
+  function admins($http, $q) {
 
      function load() {
        var deferred = $q.defer();
@@ -59,6 +59,6 @@
   }
 
   angular.module('electivesApp')
-    .factory('admins', ['$http', '$q', 'authEvents', admins]);
+    .factory('admins', ['$http', '$q', admins]);
 
 })();

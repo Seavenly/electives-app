@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  function studentList($http, $q, user, electives, authEvents) {
+  function studentList($http, $q, user, electives) {
     var list = [ [], [], [], [] ];
 
     function getList() {
@@ -136,6 +136,6 @@
   }
 
   angular.module('electivesApp')
-    .factory('studentList', ['$http', '$q', 'user', 'electives', 'authEvents', studentList]);
+    .factory('studentList', ['$http', '$q', 'user', 'electives', studentList]);
 
 })();

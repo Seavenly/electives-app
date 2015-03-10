@@ -47,19 +47,7 @@ angular.module('electivesApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize
 
     $urlRouterProvider.otherwise('/');
   })
-  .run(['$q', 'user', 'electives', 'groups', 'students', 'admins', 'studentList',
-  function($q, user, electives, groups, students, admins, studentList) {
-    //StudentList service relies on electives and user service
-    $q.all([electives.load(), user.load()]).then(function(data) {
-      if(data[1]){
-        if (data[1].access === 'student') {
-          studentList.load();
-        } else if (data[1].access === 'admin') {
-          students.load();
-          groups.load();
-          admins.load();
-        }
-      }
-    });
+  .run(['load', function(load) {
+    load.all();
   }])
 ;
