@@ -10,25 +10,6 @@
   img.pull-right
     width 50px
 
-.table-div
-  margin-bottom 5em
-  > .row
-    position relative
-    padding .6em 0 .6em
-    margin 0
-    border-bottom 1px solid #ccc
-    background-color white
-    &:nth-child(2n-1)
-      background-color #fafafa
-
-    &:hover
-      background-color #eaeaea
-
-    &.bg-danger
-      background-color #f2dede
-      &:hover
-        background-color #dbb
-
 .panel.table
   > .list-group
     > .list-group-item
@@ -47,10 +28,41 @@
         .panel-body
           background-color #f4f4f4
 
+.log
+  max-height 600px
+  overflow auto
+  .line
+    div
+      overflow hidden
+      padding-left 2em
+
+    div.line-number
+      color #666
+      width 3.3em
+      padding-left .5em
+      border-right 3px solid #aaa
+      float left
+      background-color #ddd
+
+    div.type
+      width 8em
+      float left
+      text-align right
+
+    div.bg-dark
+      background-color #888
+      color white
+
+    &:nth-child(2n)
+      div.line-number
+        background-color #ccc
+
 .req-electives
   border 1px solid #ccc
   border-top none
   .list-group-item
+    &:last-child
+      border-bottom none
     &:hover
       background-color #ddf
 

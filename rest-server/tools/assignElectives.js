@@ -19,6 +19,7 @@ var logger    = require('./logger');
 */
 
 function initialSetup() {
+  logger.clear();
   var electives = Elective.find().populate('_group').exec();
   var students = Student.find({ submit: { $ne: null }}).sort('grade submit').exec();
   return promise.all([electives, students]).then(function(data) {
@@ -27,7 +28,7 @@ function initialSetup() {
 }
 
 function requiredCycle(data) {
-  logger.log('--- REQUIRED CYCLE ---');
+  logger.log('HEAD', 'REQUIRED CYCLE');
   var reqElectives = _.filter(data[0], function(elective) { return elective.required; });
   var students = _.filter(data[1], function(student){ return student.grade === 8; });
   for (var i in students) {
@@ -42,18 +43,18 @@ function requiredCycle(data) {
 }
 
 function otherCycleOne(data) {
-  logger.log('--- OTHER CYCLE ONE ---');
+  logger.log('HEAD', 'OTHER CYCLE ONE');
   var electives = data[0];
   var students = data[1];
   for (var i in students) {
     var student = students[i];
     /*jshint loopfunc: true */
-    logger.log(student.fullName()+' wants...');
-    logger.log(_.mapValues(student.list.toObject(), function(list) {
+    logger.log('INFO', student.fullName()+' wants...');
+    logger.log('INFO', _.values(_.mapValues(student.list.toObject(), function(list) {
       return _.find(electives, function(elective) {
         return elective.id === list[0].toString();
       }).name;
-    }));
+    })).join(', '));
     for (var quarter in student.list.toObject()) {
       var elective = _.find(electives, function(elective) {
         return elective.id === student.list[quarter][0].toString();
@@ -66,7 +67,7 @@ function otherCycleOne(data) {
 }
 
 function otherCycleTwo(data) {
-  logger.log('--- OTHER CYCLE TWO ---');
+  logger.log('HEAD', 'OTHER CYCLE TWO');
   var electives = data[0];
   var students = data[1];
   for (var i in students) {
@@ -87,7 +88,30 @@ function otherCycleTwo(data) {
 }
 
 function findErrors(data) {
+  var students = data[1];
+  students.forEach(function(student) {
+    student.electives.forEach(function(elective, index) {
+      if (!elective) {
+        logger.error(student.fullName()+' is missing an elective for Quarter '+(index+1));
+      }
+    });
+  });
+  return data;
+}
 
+function logSummary(data) {
+  var electives = data[0];
+  var students = data[1];
+  logger.log('HEAD', 'SUMMARY');
+  students.forEach(function(student) {
+    var electivesArr = _.map(student.electives, function(id) {
+      if (id === '_semester') { return id; }
+      return _.find(electives, function(elective) {
+        return elective.id === id.toString();
+      }).name;
+    });
+    logger.log('INFO', student.fullName()+': '+electivesArr.join(', '));
+  });
 }
 
 function assignElectives(req, res) {
@@ -96,9 +120,14 @@ function assignElectives(req, res) {
     .then(otherCycleOne)
     .then(otherCycleTwo)
     .then(findErrors)
+    .then(logSummary)
     .then(function() {
-      logger.log('Electives calculated successfully');
-      res.json({ message: logger.getLog() });
+      if (logger.hasErrors()) {
+        logger.log('ERROR', 'Electives calculated WITH ERRORS');
+      } else {
+        logger.log('SUCCESS', 'Electives calculated successfully');
+      }
+      res.json({ message: logger.getLog(), errors: logger.hasErrors() });
     }, function(err) {
       res.send(err);
     });

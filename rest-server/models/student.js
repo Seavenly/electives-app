@@ -30,9 +30,9 @@ StudentSchema.methods.fullName = function() {
 StudentSchema.methods.electiveCount = function(doc) {
   var student = this.toObject();
   if (doc.constructor.modelName === 'Elective') {
-    return _.remove(student.electives, function(n) { return !!(n && n.equals(doc._id)); }).length;
+    return _.remove(student.electives, function(n) { return !!(n && n !== '_semester' && n.equals(doc._id)); }).length;
   } else if (doc.constructor.modelName === 'ElectiveGroup') {
-    return _.remove(student.electives, function(n) { return !!(n && _.find(doc.electives, function(a){ return a.equals(n); })); }).length;
+    return _.remove(student.electives, function(n) { return !!(n && n !== '_semester' && _.find(doc.electives, function(a){ return a.equals(n); })); }).length;
   }
 };
 
@@ -74,29 +74,33 @@ StudentSchema.methods.fillElectives = function(electives) {
         index = elective.available[j] - 1;
         if (student.setElective(elective, index)) { return; }
       }
-      logger.log('(ERROR) Unable to assign '+student.fullName()+' to '+elective.name);
+      logger.error('Unable to assign '+student.fullName()+' to '+elective.name);
     });
 };
 
 function checks(cycle, student, elective, index) {
   if (student.electives[index]) {
-    logger.log('(FILLED) '+student.fullName()+' has an elective for Quarter '+(index+1)+' already');
+    logger.log('FILLED', student.fullName()+' has an elective for Quarter '+(index+1)+' already');
+    return false;
+  }
+  if (elective.semester && student.electives[index+1]) {
+    logger.log('SEMI', student.fullName()+' has an elective for Quarter '+(index+2)+' already');
     return false;
   }
   if (elective.totalCurrent(index) >= elective.cap) {
-    logger.log('(FULL) Unable to assign '+student.fullName()+' to '+elective.name);
+    logger.log('FULL', 'Unable to assign '+student.fullName()+' to '+elective.name);
     return false;
   }
   if (elective._group && student.electiveCount(elective._group) >= elective._group.perYear) {
-    logger.log('(LIMIT) '+student.fullName()+' reached yearly limit for '+elective._group.name+' (group)');
+    logger.log('LIMIT', student.fullName()+' reached yearly limit for '+elective._group.name+' (group)');
     return false;
   } else if (student.electiveCount(elective) >= elective.perYear) {
-    logger.log('(LIMIT) '+student.fullName()+' reached yearly limit for '+elective.name);
+    logger.log('LIMIT', student.fullName()+' reached yearly limit for '+elective.name);
     return false;
   }
   if (cycle === 'OC1') {
     if (elective.quartersdata[index].current[student.grade-6]+1 > elective.cap/3) {
-      logger.log('(OC1-FULL) '+student.fullName()+' ('+elective.name+' full to 1/3)');
+      logger.log('OC1-FULL', student.fullName()+' ('+elective.name+' full to 1/3)');
       return false;
     }
   }
@@ -109,7 +113,10 @@ StudentSchema.methods.setElective = function(elective, index, cycle) {
     student.electives[index] = elective._id;
     elective.quartersdata[index].current[student.grade-6] += 1;
     elective.quartersdata[index].students.push(student._id);
-    logger.log('(SUCCESS) '+student.fullName()+' assigned to '+elective.name+' (Quarter '+(index+1)+')');
+    if (elective.semester) {
+      student.electives[index+1] = '_semester';
+    }
+    logger.log('SUCCESS', student.fullName()+' assigned to '+elective.name+' (Quarter '+(index+1)+')');
     return true;
   }
   return false;

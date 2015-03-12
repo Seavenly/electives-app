@@ -1,5 +1,15 @@
 <div class="container">
 
+  <div class="panel panel-primary" ng-if="vm.log">
+    <div class="panel-heading">
+      Log File
+      <button type="button" class="close" aria-label="Close" ng-click="vm.log = null"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div class="panel-body log clearfix">
+      <div class="line" ng-repeat="line in vm.log track by $index" ng-bind-html="line"></div>
+    </div>
+  </div>
+
   <!-- CREATE ELECTIVE -->
   <div class="panel panel-primary" ng-if="vm.showCreator">
     <div class="panel-heading">
@@ -129,6 +139,10 @@
           <span class="glyphicon glyphicon-plus-sign"></span> New Elective
         </button>
       </div>
+
+      <button class="btn btn-warning btn-sm pull-right" ng-click="vm.calculateElectives()">
+        <span class="glyphicon glyphicon-flash"></span> Calculate
+      </button>
 
     </div>
 

@@ -41,6 +41,10 @@
         });
     }
 
+    function calculate() {
+      return $http.get('http://localhost:8080/api/actions/electives/calculate');
+    }
+
     function findById(id) {
       return _.find(electivesObj.data, { _id: id });
     }
@@ -56,6 +60,7 @@
       add: add,
       update: update,
       delete: remove,
+      calculate: calculate,
       findById: findById
     };
     return electivesObj;

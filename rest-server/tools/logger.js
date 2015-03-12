@@ -2,10 +2,14 @@
 
 var log = [];
 var errors = [];
+var hasErrors = false;
+var line = 1;
 
 var logger = {
-  log: function(message) {
-    log.push(message);
+  log: function(type, message) {
+    if (typeof type === 'undefined') { type = 'INFO'; }
+    log.push([line, type, message]);
+    line++;
   },
 
   getLog: function() {
@@ -13,11 +17,19 @@ var logger = {
   },
 
   error: function(message) {
-    errors.push(message);
+    this.log('ERROR', message);
+    hasErrors = true;
   },
 
-  getErrors: function() {
-    return errors;
+  hasErrors: function() {
+    return hasErrors;
+  },
+
+  clear: function() {
+    log = [];
+    errors = [];
+    hasErrors = false;
+    line = 1;
   }
 };
 

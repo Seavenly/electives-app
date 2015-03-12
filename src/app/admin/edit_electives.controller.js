@@ -85,6 +85,35 @@
       if (vm.allSelected) { vm.toggleSelectAll(); }
     };
 
+    function parseLog(log) {
+      var parsedLog = [];
+      for(var i = 0; i<log.length; i++) {
+        var type = log[i][1];
+        var message = log[i][2].toString();
+        if (type === 'INFO') {
+          message = '<div class="type text-muted">'+type+'</div><div class="text-muted">'+message+'</div>';
+        } else if (type === 'HEAD') {
+          message = '<div class="type bg-dark">'+type+'</div><div class="bg-dark"><strong>'+message+'</strong></div>';
+        } else if (type === 'SUCCESS') {
+          message = '<div class="type bg-success text-success">'+type+'</div><div class="bg-success text-success">'+message+'</div>';
+        } else if (type.search('FILLED|OC1-FULL|LIMIT') !== -1) {
+          message = '<div class="type bg-warning text-warning">'+type+'</div><div class="bg-warning text-warning">'+message+'</div>';
+        } else if (type === 'ERROR') {
+          message = '<div class="type bg-danger text-danger">'+type+'</div><div class="bg-danger text-danger">'+message+'</div>';
+        } else {
+          message = '<div>'+message+'</div>';
+        }
+        parsedLog.push('<div class="line-number">'+log[i][0]+'</div>'+message);
+      }
+      return parsedLog;
+    }
+    vm.calculateElectives = function() {
+      electives.calculate().success(function(data) {
+        console.log(data);
+        vm.log = parseLog(data.message);
+      });
+    };
+
   }
 
   angular.module('electivesApp')
