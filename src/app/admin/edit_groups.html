@@ -47,8 +47,8 @@
                   <div class="col-xs-12">
                     <ul class="list-group">
                       <li class="list-group-item" ng-repeat="elective in vm.form.electives | orderBy:'name' track by elective._id">
-                        <a href class="badge glyphicon glyphicon-remove" ng-click="vm.removeElective(elective)"> </a>
                         {{ elective.name }}
+                        <button type="button" class="close" aria-label="Close" ng-click="vm.removeElective(elective)"><span aria-hidden="true">&times;</span></button>
                       </li>
                     </ul>
                   </div>
@@ -142,6 +142,7 @@
                   <div class="form-group">
                     <label class="col-xs-2 control-label">Electives</label>
                     <div class="col-xs-5">
+
                       <div class="row">
                         <div class="col-xs-12">
                           <select class="form-control" ng-change="vm.addElective(true)" ng-model="vm.currentEdit.elective">
@@ -150,9 +151,10 @@
                           </select>
                         </div>
                       </div>
+
                       <div class="row">
                         <div class="col-xs-12">
-                          <ul class="list-group req-electives">
+                          <ul class="list-group req-electives" ng-if="vm.currentEdit.electives.length > 0">
                             <li class="list-group-item" ng-repeat="elective in vm.currentEdit.electives | orderBy:'name' track by elective._id">
                               {{ elective.name }}
                               <button type="button" class="close" aria-label="Close" ng-click="vm.removeElective(elective, true)"><span aria-hidden="true">&times;</span></button>
@@ -160,6 +162,7 @@
                           </ul>
                         </div>
                       </div>
+
                     </div>
                   </div>
 

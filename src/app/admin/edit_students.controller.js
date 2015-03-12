@@ -50,7 +50,7 @@
         vm.currentEdit.data.required = _.map(vm.currentEdit.data.required, function(n) {
           return _.find(vm.electives.data, {_id: n});
         });
-        console.log(vm.currentEdit);
+        console.log(vm.currentEdit.data.required);
       }
     };
 
@@ -72,7 +72,6 @@
 
       if (exists) {
         student.data.required = _.pluck(form.data.required, '_id');
-        console.log('update:', student);
         students.update(student);
       } else {
         students.create(student);
@@ -89,7 +88,6 @@
         form.data.required.push(_.find(electives.data, { _id: vm.temp.required }));
       }
       vm.temp.required = 'default';
-      console.log(form);
     };
 
     vm.removeRequired = function(elective) {

@@ -233,10 +233,10 @@
 
                       <div class="row">
                         <div class="col-xs-12">
-                          <ul class="list-group">
+                          <ul class="list-group req-electives" ng-if="vm.currentEdit.data.required.length > 0">
                             <li class="list-group-item" ng-repeat="elective in vm.currentEdit.data.required | orderBy:'name' track by elective._id">
-                              <a href class="badge glyphicon glyphicon-remove" ng-click="vm.removeRequired(elective)"> </a>
                               {{ elective.name }}
+                              <button type="button" class="close" aria-label="Close" ng-click="vm.removeRequired(elective)"><span aria-hidden="true">&times;</span></button>
                             </li>
                           </ul>
                         </div>
