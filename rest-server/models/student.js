@@ -70,8 +70,9 @@ StudentSchema.methods.fillElectives = function(electives) {
         if (student.setElective(elective, index)) { return; }
       }
       // student's prefs not available, put student in elective for any open quarter
-      for (j in elective.available) {
-        index = elective.available[j] - 1;
+      var rest = _.difference(elective.available, quarters);
+      for (j in rest) {
+        index = rest[j] - 1;
         if (student.setElective(elective, index)) { return; }
       }
       logger.error('Unable to assign '+student.fullName()+' to '+elective.name);
@@ -79,16 +80,19 @@ StudentSchema.methods.fillElectives = function(electives) {
 };
 
 function checks(cycle, student, elective, index) {
-  if (student.electives[index]) {
+  if (elective.grades.indexOf(student.grade) === -1) {
+    logger.log('GRADE', student.fullName()+' is not in the correct grade for '+elective.name);
+    return false;
+  } else if (student.electives[index]) {
     logger.log('FILLED', student.fullName()+' has an elective for Quarter '+(index+1)+' already');
     return false;
   }
   if (elective.semester && student.electives[index+1]) {
-    logger.log('SEMI', student.fullName()+' has an elective for Quarter '+(index+2)+' already');
+    logger.log('SEMI', student.fullName()+' cannot fit '+elective.name+' (Quarter '+(index+1)+') because there is an elective for Quarter '+(index+2)+' already');
     return false;
   }
   if (elective.totalCurrent(index) >= elective.cap) {
-    logger.log('FULL', 'Unable to assign '+student.fullName()+' to '+elective.name);
+    logger.log('FULL', student.fullName()+' cannot fit into '+elective.name+' (Quarter '+(index+1)+')');
     return false;
   }
   if (elective._group && student.electiveCount(elective._group) >= elective._group.perYear) {
@@ -98,9 +102,10 @@ function checks(cycle, student, elective, index) {
     logger.log('LIMIT', student.fullName()+' reached yearly limit for '+elective.name);
     return false;
   }
+
   if (cycle === 'OC1') {
     if (elective.quartersdata[index].current[student.grade-6]+1 > elective.cap/3) {
-      logger.log('OC1-FULL', student.fullName()+' ('+elective.name+' full to 1/3)');
+      logger.log('OC1-FULL', student.fullName()+' ('+elective.name+' full to 1/3 for '+student.grade+'th graders)');
       return false;
     }
   }

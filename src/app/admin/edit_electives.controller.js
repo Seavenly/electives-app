@@ -96,7 +96,7 @@
           message = '<div class="type bg-dark">'+type+'</div><div class="bg-dark"><strong>'+message+'</strong></div>';
         } else if (type === 'SUCCESS') {
           message = '<div class="type bg-success text-success">'+type+'</div><div class="bg-success text-success">'+message+'</div>';
-        } else if (type.search('FILLED|OC1-FULL|LIMIT') !== -1) {
+        } else if (type.search('FILLED|OC1-FULL|LIMIT|FULL|GRADE|SEMI') !== -1) {
           message = '<div class="type bg-warning text-warning">'+type+'</div><div class="bg-warning text-warning">'+message+'</div>';
         } else if (type === 'ERROR') {
           message = '<div class="type bg-danger text-danger">'+type+'</div><div class="bg-danger text-danger">'+message+'</div>';

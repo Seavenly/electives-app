@@ -2,11 +2,20 @@
 
   <div class="panel panel-primary" ng-if="vm.log">
     <div class="panel-heading">
-      Log File
-      <button type="button" class="close" aria-label="Close" ng-click="vm.log = null"><span aria-hidden="true">&times;</span></button>
+      <div class="row clearfix">
+        <div class="col-xs-2">
+          Log File
+        </div>
+        <div class="col-xs-1 pull-right">
+          <button type="button" class="close" aria-label="Close" ng-click="vm.log = null"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="col-xs-4 pull-right">
+          <input type="text" class="form-control" placeholder="Search" ng-model="vm.lineSearch" ng-model-options="{debounce:300}">
+        </div>
+      </div>
     </div>
     <div class="panel-body log clearfix">
-      <div class="line" ng-repeat="line in vm.log track by $index" ng-bind-html="line"></div>
+      <div class="line" ng-repeat="line in vm.log | filter:vm.lineSearch track by $index" ng-bind-html="line"></div>
     </div>
   </div>
 
