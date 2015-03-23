@@ -21,7 +21,7 @@ var logger    = require('./logger');
 function initialSetup() {
   logger.clear();
   var electives = Elective.find().populate('_group').exec();
-  var students = Student.find({ submit: { $ne: null }}).sort('grade submit').exec();
+  var students = Student.find({ submit: { $ne: null }}).sort('-grade submit').exec();
   return promise.all([electives, students]).then(function(data) {
     return data;
   });
@@ -75,7 +75,7 @@ function otherCycleTwo(data) {
     /*jshint loopfunc: true */
     student.electives.forEach(function(electiveId, index) {
       if (!electiveId) {
-        for(var j in student.list['q'+(index+1)]) {
+        for(var j in student.list['q'+(index+1)].toObject()) {
           var elective = _.find(electives, function(elective) {
             return elective.id === student.list['q'+(index+1)][j].toString();
           });
@@ -105,7 +105,7 @@ function logSummary(data) {
   logger.log('HEAD', 'SUMMARY');
   students.forEach(function(student) {
     var electivesArr = _.map(student.electives, function(id) {
-      if (id === '_semester') { return id; }
+      if (id === '_semester' || !id) { return id; }
       return _.find(electives, function(elective) {
         return elective.id === id.toString();
       }).name;

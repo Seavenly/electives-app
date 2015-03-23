@@ -13,20 +13,21 @@ var actions = {
     reset: function(req, res) {
       tools.resetElectives(req, res);
     },
-    
+
     setCap: function(req, res) {
       tools.setElectivesCap(req, res);
     }
   },
 
-  resetStudentList: function(req, res) {
+  students: {
+    setLists: function(req, res) {
+      tools.setStudentLists(req, res);
+    },
 
-  },
-
-  testlist: function(req, res) {
-
+    randomizeLists: function(req, res) {
+      tools.randomizeStudentLists(req, res);
+    }
   }
-
 };
 
 module.exports = actions;
