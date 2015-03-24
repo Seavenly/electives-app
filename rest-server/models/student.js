@@ -127,4 +127,22 @@ StudentSchema.methods.setElective = function(elective, index, cycle) {
   return false;
 };
 
+StudentSchema.methods.removeElective = function(index, electives) {
+  var student = this;
+  if (!student.electives[index]) {
+    logger.error(student.fullName()+' has no elective for Quarter '+(index+1)+' to remove');
+    return false;
+  }
+  var elective = _.find(electives, function(elective) {
+    return elective.id === student.electives[index].toString();
+  });
+  student.electives[index] = null;
+  elective.quartersdata[index].current[student.grade-6] -= 1;
+  elective.quartersdata[index].students.splice(_.findIndex(elective.quartersdata[index].students, function(studentId) {
+    return studentId.toString() === student.id;
+  }), 1);
+  logger.log('REMOVE', student.fullName()+' removed from '+elective.name+' (Quarter '+(index+1)+')');
+  return elective;
+};
+
 module.exports = mongoose.model('Student', StudentSchema);

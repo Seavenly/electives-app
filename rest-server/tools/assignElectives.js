@@ -23,6 +23,9 @@ function initialSetup() {
   var electives = Elective.find().populate('_group').exec();
   var students = Student.find({ submit: { $ne: null }}).sort('-grade submit').exec();
   return promise.all([electives, students]).then(function(data) {
+    data[1].forEach(function(student) {
+      student.electives = [null, null, null, null];
+    });
     return data;
   });
 }
@@ -49,8 +52,7 @@ function otherCycleOne(data) {
   for (var i in students) {
     var student = students[i];
     /*jshint loopfunc: true */
-    logger.log('INFO', student.fullName()+' wants...');
-    logger.log('INFO', _.values(_.mapValues(student.list.toObject(), function(list) {
+    logger.log('INFO', student.fullName()+' wants: '+ _.values(_.mapValues(student.list.toObject(), function(list) {
       return _.find(electives, function(elective) {
         return elective.id === list[0].toString();
       }).name;
@@ -87,12 +89,42 @@ function otherCycleTwo(data) {
   return data;
 }
 
+function fixCycle(data) {
+  logger.log('HEAD', 'FIX CYCLE');
+  var electives = data[0];
+  var students = data[1];
+  students.forEach(function(student) {
+    /*jshint loopfunc: true */
+    student.electives.forEach(function(electiveId, index) {
+      if (!electiveId && index%2 === 0 && student.electives[index+1]) {
+        var removedElective = student.removeElective(index+1, electives);
+        for(var j in student.list['q'+(index+1)].toObject()) {
+          var elective = _.find(electives, function(elective) {
+            return elective.id === student.list['q'+(index+1)][j].toString();
+          });
+          if (student.setElective(elective, index, 'FIX')) { break; }
+        }
+        student.setElective(removedElective, index+1, 'FIX');
+      }
+    });
+  });
+  return data;
+}
+
 function findErrors(data) {
   var students = data[1];
+  var electives = data[0];
   students.forEach(function(student) {
     student.electives.forEach(function(elective, index) {
       if (!elective) {
         logger.error(student.fullName()+' is missing an elective for Quarter '+(index+1));
+      }
+    });
+  });
+  electives.forEach(function(elective) {
+    elective.available.forEach(function(quarter) {
+      if (elective.totalCurrent(+quarter-1) > elective.cap) {
+        logger.error(elective.name+' has too many students for Quarter '+quarter+' ( '+elective.totalCurrent(+quarter-1)+' / '+elective.cap+' )');
       }
     });
   });
@@ -119,6 +151,7 @@ function assignElectives(req, res) {
     .then(requiredCycle)
     .then(otherCycleOne)
     .then(otherCycleTwo)
+    .then(fixCycle)
     .then(findErrors)
     .then(logSummary)
     .then(function() {
@@ -131,7 +164,6 @@ function assignElectives(req, res) {
     }, function(err) {
       res.send(err);
     });
-
 }
 
 module.exports = assignElectives;
