@@ -29,10 +29,28 @@ StudentSchema.methods.fullName = function() {
 };
 StudentSchema.methods.electiveCount = function(doc) {
   var student = this.toObject();
+  var semesterCheck = 0;
   if (doc.constructor.modelName === 'Elective') {
-    return _.remove(student.electives, function(n) { return !!(n && n !== '_semester' && n.equals(doc._id)); }).length;
+    return _.filter(student.electives, function(n) {
+      if(!!(n && n.equals(doc._id))) {
+        if (doc.semester) { return semesterCheck++%2 === 0; }
+        return true;
+      } else {
+        return false;
+      }
+    }).length;
+    // return _.remove(student.electives, function(n) { return !!(n && n !== '_semester' && n.equals(doc._id)); }).length;
   } else if (doc.constructor.modelName === 'ElectiveGroup') {
-    return _.remove(student.electives, function(n) { return !!(n && n !== '_semester' && _.find(doc.electives, function(a){ return a.equals(n); })); }).length;
+    return _.filter(student.electives, function(n) {
+      var elective = _.find(doc.electives, function(a){ return a.equals(n); });
+      if(!!(n && elective)) {
+        if (elective.semester) { return semesterCheck++%2 === 0; }
+        return true;
+      } else {
+        return false;
+      }
+    }).length;
+    // return _.remove(student.electives, function(n) { return !!(n && n !== '_semester' && _.find(doc.electives, function(a){ return a.equals(n); })); }).length;
   }
 };
 
@@ -115,12 +133,11 @@ function checks(cycle, student, elective, index) {
 StudentSchema.methods.setElective = function(elective, index, cycle) {
   var student = this;
   if(checks(cycle, student, elective, index)) {
-    student.electives[index] = elective._id;
-    elective.quartersdata[index].current[student.grade-6] += 1;
+    student.electives.set(index, elective._id);
+    if (elective.semester) { student.electives.set(index+1, elective._id); }
+    elective.quartersdata[index].current.set(student.grade-6, elective.quartersdata[index].current[student.grade-6] + 1);
     elective.quartersdata[index].students.push(student._id);
-    if (elective.semester) {
-      student.electives[index+1] = '_semester';
-    }
+
     logger.log('SUCCESS', student.fullName()+' assigned to '+elective.name+' (Quarter '+(index+1)+')');
     return true;
   }
@@ -136,11 +153,13 @@ StudentSchema.methods.removeElective = function(index, electives) {
   var elective = _.find(electives, function(elective) {
     return elective.id === student.electives[index].toString();
   });
-  student.electives[index] = null;
-  elective.quartersdata[index].current[student.grade-6] -= 1;
+  student.electives.set(index, null);
+  if (elective.semester) { student.electives.set(index+1, null); }
+  elective.quartersdata[index].current.set(student.grade-6, elective.quartersdata[index].current[student.grade-6] - 1);
   elective.quartersdata[index].students.splice(_.findIndex(elective.quartersdata[index].students, function(studentId) {
     return studentId.toString() === student.id;
   }), 1);
+
   logger.log('REMOVE', student.fullName()+' removed from '+elective.name+' (Quarter '+(index+1)+')');
   return elective;
 };

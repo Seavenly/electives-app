@@ -23,12 +23,7 @@ var ElectiveSchema = new Schema({
 });
 
 ElectiveSchema.methods.totalCurrent = function(index) {
-  var current = this.quartersdata[index].current.toObject();
-  var total = 0;
-  for(var i in current) {
-    total += current[i];
-  }
-  return total;
+  return this.quartersdata[index].students.length;
 };
 
 module.exports = mongoose.model('Elective', ElectiveSchema);

@@ -7,7 +7,7 @@ var ElectiveGroupSchema = new Schema({
   name:         String,
   description:  String,
   perYear:      Number,
-  electives:    [{ type: Schema.Types.ObjectId, ref: 'Elctive' }]
+  electives:    [{ type: Schema.Types.ObjectId, ref: 'Elective' }]
 });
 
 module.exports = mongoose.model('ElectiveGroup', ElectiveGroupSchema);
