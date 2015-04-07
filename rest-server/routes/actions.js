@@ -16,6 +16,10 @@ var actions = {
 
     setCap: function(req, res) {
       tools.setElectivesCap(req, res);
+    },
+
+    log: function(req, res) {
+      tools.logElectives(req, res);
     }
   },
 
@@ -26,6 +30,10 @@ var actions = {
 
     randomizeLists: function(req, res) {
       tools.randomizeStudentLists(req, res);
+    },
+    
+    log: function(req, res) {
+      tools.logStudents(req, res);
     }
   }
 };

@@ -5,6 +5,7 @@ var resetElectives        = require('./resetElectives');
 var setElectivesCap       = require('./setElectivesCap');
 var setStudentLists       = require('./setStudentLists');
 var randomizeStudentLists = require('./randomizeStudentLists');
+var logElectives          = require('./logElectives');
 
 module.exports = {
   assignElectives: assignElectives,
@@ -12,4 +13,5 @@ module.exports = {
   setElectivesCap: setElectivesCap,
   setStudentLists: setStudentLists,
   randomizeStudentLists: randomizeStudentLists,
+  logElectives: logElectives
 };
