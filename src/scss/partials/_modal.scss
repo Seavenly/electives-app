@@ -1,0 +1,85 @@
+$speed: 0.3s;
+
+.modal-wrapper {
+  position: fixed;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.7);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+
+  .modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 1rem;
+    border-radius: 0.2rem;
+
+    button {
+      display: inline-block;
+      margin-left: 0.5rem;
+      background: $colorMain;
+      color: white;
+      border: none;
+      border-radius: 0.2rem;
+      padding: 0.5rem 1rem;
+      &:hover {
+        cursor: pointer;
+        background: lighten($colorMain, 20%);
+      }
+      &.warning {
+        background: #f44336;
+        &:hover {
+          background: lighten(#f44336, 10%);
+        }
+      }
+    }
+
+    .controls {
+      text-align: right;
+      margin-top: 1rem;
+    }
+  }
+
+  &.active {
+    display: block;
+  }
+  &.fade-enter {
+    opacity: 0;
+    transition: opacity $speed;
+
+    .modal {
+      transform: translate(-50%, -250%);
+      transition: transform $speed;
+    }
+
+    &.fade-enter-active {
+      opacity: 1;
+
+      .modal {
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+  &.fade-exit {
+    opacity: 1;
+    transition: opacity $speed;
+
+    .modal {
+      transform: translate(-50%, -50%);
+      transition: transform $speed;
+    }
+
+    &.fade-exit-active {
+      opacity: 0;
+
+      .modal {
+        transform: translate(-50%, -250%);
+      }
+    }
+  }
+}

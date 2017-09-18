@@ -1,0 +1,7 @@
+[{
+  "id": 1,
+  "name": "Physical Education",
+  "description": "Related P.E. electives",
+  "limit": 2,
+  "electives": ["Soccer", "Mixed Sports"]
+}]

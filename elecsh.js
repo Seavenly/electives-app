@@ -1,6 +1,10 @@
-const tools = require('./src/tools/tools');
+const tools = require('./server/tools/tools');
 const chalk = require('chalk');
-const mongoose = require('./src/config/mongoose');
+const mongoose = require('mongoose');
+
+const mongodbConfig = require('./server/config/mongodb');
+
+mongoose.connect(mongodbConfig.address);
 
 const args = process.argv.slice(2);
 const flags = ['reset-electives', 'setup-users', 'run'];

@@ -1,0 +1,58 @@
+.admin-panel {
+  background: #eee;
+  ul {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  li {
+    margin: 0 0.2rem;
+  }
+
+  a {
+    text-decoration: none;
+    color: #555;
+    display: block;
+    padding: 0.5rem;
+
+    &:hover {
+      background: #bbb;
+      color: white;
+    }
+  }
+}
+
+.edit-table {
+  .controls {
+    margin-bottom: 0.5rem;
+
+    button {
+      margin-right: 0.5rem;
+    }
+  }
+  .item {
+    display: flex;
+    margin: 0.1rem 0;
+    align-items: center;
+    background: white;
+    transition: all 0.3s;
+    padding: 0.5rem 1rem;
+    color: $colorBlack;
+    border-radius: 0.2rem;
+
+    &:hover {
+      background: #eee;
+    }
+    &.checked {
+      background: #ef5350;
+      color: white;
+      &:hover {
+        background: #e53935;
+      }
+    }
+
+    .c1 { flex: 1 1 5%; }
+    .c2 { flex: 1 1 85%; }
+    .c3 { flex: 1 1 10%; }
+  }
+}

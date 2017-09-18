@@ -4,14 +4,17 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const router = require('./src/routes/router');
-require('./src/config/mongoose');
+const mongoose = require('mongoose');
 
-const User = require('./src/models/user');
+const router = require('./routes/router');
+const mongodbConfig = require('./config/mongodb');
+const User = require('./models/user');
+
+mongoose.connect(mongodbConfig.address);
 
 // Config passport
-require('./src/config/passport')(passport, User, LocalStrategy);
-const authRouter = require('./src/routes/authentication')(passport);
+require('./config/passport')(passport, User, LocalStrategy);
+const authRouter = require('./routes/authentication')(passport);
 
 const app = express();
 app.use(cookieParser());
