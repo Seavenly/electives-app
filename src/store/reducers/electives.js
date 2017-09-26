@@ -1,14 +1,16 @@
+import uniqid from 'uniqid';
 import data from '../data/electives.json';
 
 const CREATE_ELECTIVE = 'CREATE_ELECTIVE';
 const UPDATE_ELECTIVE = 'UPDATE_ELECTIVE';
-const DELETE_ELECTIVE = 'DELETE_ELECTIVE';
+const DELETE_ELECTIVES = 'DELETE_ELECTIVES';
 
-function electivesReducer(electives = data.sort((a, b) => a.name > b.name), action) {
+function electivesReducer(electives = data, action) {
   switch (action.type) {
     case CREATE_ELECTIVE:
       return [...electives,
         {
+          id: uniqid(),
           ...action.elective,
           images: [...action.elective.images],
           grades: [...action.elective.grades],
@@ -29,7 +31,7 @@ function electivesReducer(electives = data.sort((a, b) => a.name > b.name), acti
         ...electives.slice(index + 1),
       ];
     }
-    case DELETE_ELECTIVE:
+    case DELETE_ELECTIVES:
       return electives.filter(elec => !action.ids.includes(elec.id));
     default:
       return electives;

@@ -6,6 +6,11 @@ class ElectiveModal extends Component {
     super(props);
     this.state = {
       elective: {
+        name: '',
+        description: '',
+        semester: false,
+        required: false,
+        cap: 0,
         images: [],
         grades: [],
         available: [],
@@ -14,10 +19,11 @@ class ElectiveModal extends Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
+    this.isChecked = this.isChecked.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.elective === nextProps.elective) return;
+    if (this.props.elective.id === nextProps.elective.id) return;
     // Check for full elective object
     if (nextProps.elective.grades) {
       this.setState(() => ({
@@ -31,6 +37,11 @@ class ElectiveModal extends Component {
     } else {
       this.setState(() => ({
         elective: {
+          name: '',
+          description: '',
+          semester: false,
+          required: false,
+          cap: 0,
           images: [],
           grades: [],
           available: [],
@@ -77,8 +88,13 @@ class ElectiveModal extends Component {
     this.props.onClose(true, { elective: this.state.elective });
   }
 
+  isChecked(key, value) {
+    return this.state.elective[key] && this.state.elective[key].includes(value);
+  }
+
   render() {
     const { elective, onClose } = this.props;
+
     return (
       <div className="modal-body modal-body--elective">
         <div className="header">
@@ -92,16 +108,16 @@ class ElectiveModal extends Component {
             </div>
             <div className="form-control">
               <label htmlFor="available">Quarters:</label>
-              <label htmlFor="available-1">1 <input type="checkbox" name="available-1" checked={this.state.elective.available.includes(1)} onChange={this.onInputChange} /></label>
-              <label htmlFor="available-2">2 <input type="checkbox" name="available-2" checked={this.state.elective.available.includes(2)} onChange={this.onInputChange} /></label>
-              <label htmlFor="available-3">3 <input type="checkbox" name="available-3" checked={this.state.elective.available.includes(3)} onChange={this.onInputChange} /></label>
-              <label htmlFor="available-4">4 <input type="checkbox" name="available-4" checked={this.state.elective.available.includes(4)} onChange={this.onInputChange} /></label>
+              <label htmlFor="available-1">1 <input type="checkbox" name="available-1" checked={this.isChecked('available', 1)} onChange={this.onInputChange} /></label>
+              <label htmlFor="available-2">2 <input type="checkbox" name="available-2" checked={this.isChecked('available', 2)} onChange={this.onInputChange} /></label>
+              <label htmlFor="available-3">3 <input type="checkbox" name="available-3" checked={this.isChecked('available', 3)} onChange={this.onInputChange} /></label>
+              <label htmlFor="available-4">4 <input type="checkbox" name="available-4" checked={this.isChecked('available', 4)} onChange={this.onInputChange} /></label>
             </div>
             <div className="form-control">
               <label htmlFor="grades">Grades:</label>
-              <label htmlFor="grades-6">6 <input type="checkbox" name="grades-6" checked={this.state.elective.grades.includes(6)} onChange={this.onInputChange} /></label>
-              <label htmlFor="grades-7">7 <input type="checkbox" name="grades-7" checked={this.state.elective.grades.includes(7)} onChange={this.onInputChange} /></label>
-              <label htmlFor="grades-8">8 <input type="checkbox" name="grades-8" checked={this.state.elective.grades.includes(8)} onChange={this.onInputChange} /></label>
+              <label htmlFor="grades-6">6 <input type="checkbox" name="grades-6" checked={this.isChecked('grades', 6)} onChange={this.onInputChange} /></label>
+              <label htmlFor="grades-7">7 <input type="checkbox" name="grades-7" checked={this.isChecked('grades', 7)} onChange={this.onInputChange} /></label>
+              <label htmlFor="grades-8">8 <input type="checkbox" name="grades-8" checked={this.isChecked('grades', 8)} onChange={this.onInputChange} /></label>
             </div>
             <div className="form-control">
               <label htmlFor="cap">Cap:</label>
@@ -132,6 +148,12 @@ class ElectiveModal extends Component {
 
 ElectiveModal.propTypes = {
   elective: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    description: PropTypes.string,
+    semester: PropTypes.bool,
+    required: PropTypes.bool,
+    cap: PropTypes.number,
     images: PropTypes.array,
     grades: PropTypes.array,
     available: PropTypes.array,
@@ -141,6 +163,11 @@ ElectiveModal.propTypes = {
 
 ElectiveModal.defaultProps = {
   elective: {
+    name: '',
+    description: '',
+    semester: false,
+    required: false,
+    cap: 0,
     images: [],
     grades: [],
     available: [],

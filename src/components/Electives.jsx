@@ -9,7 +9,9 @@ const Electives = ({ electives }) => (
     <div className="container">
       <h2>Electives</h2>
       <ul>
-        { electives.map(e => <li key={e.id}><ElectiveCard elective={e} /></li>) }
+        {electives.sort((a, b) => a.name > b.name).map(elective => (
+          <li key={elective.id}><ElectiveCard elective={elective} /></li>
+        ))}
       </ul>
     </div>
   </div>
@@ -20,7 +22,7 @@ Electives.propTypes = {
 };
 
 const mapStatetoProps = state => ({
-  electives: state.electives,
+  electives: [...state.electives],
 });
 
 // const mapDispatchToProps = dispatch => ({

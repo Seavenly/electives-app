@@ -13,7 +13,6 @@ function toggleModalActive(modal) {
 class Modal extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
 
     this.setWrapperRef = this.setWrapperRef.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);

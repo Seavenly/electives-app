@@ -33,11 +33,13 @@ class EditElectives extends Component {
 
   handleRemove() {
     const checkedElectives = Object.keys(this.state.form).filter(key => this.state.form[key]);
-    this.props.removeElectives(checkedElectives);
+    this.props.deleteElectives(checkedElectives);
   }
 
-  handleSave(elective) {
-    this.props.saveElective(elective);
+  handleSave({ elective }) {
+    // If an elective is set in state, then that elective is being updated
+    if (this.state.elective.name) this.props.updateElective(elective);
+    else this.props.createElective(elective);
   }
 
   openModal(type) {
@@ -46,9 +48,11 @@ class EditElectives extends Component {
 
   closeModal(confirm, response) {
     if (confirm) {
+      // Check which type of modal is currently open to perform action
       if (this.state.modal.message) this.handleRemove();
-      else if (this.state.modal.elective) this.handleSave(response.elective);
+      else if (this.state.modal.elective) this.handleSave(response);
     }
+    // Reset modal state
     this.setState({
       elective: {},
       modal: {},
@@ -63,11 +67,11 @@ class EditElectives extends Component {
         <h2>Edit Electives</h2>
         <div className="edit-table">
           <div className="controls">
-            <button>Add</button>
+            <button onClick={() => this.openModal('elective')}>Add</button>
             <button onClick={() => this.openModal('message')}>Remove</button>
           </div>
           <div className="items">
-            {electives.map(elective => (
+            {electives.sort((a, b) => a.name > b.name).map(elective => (
               <div key={elective.id} className={`item ${this.state.form[elective.id] ? 'checked' : ''}`}>
                 <div className="c1"><input type="checkbox" value={elective.id} checked={this.state.form[elective.id]} onChange={this.handleInputChange} /></div>
                 <div className="c2">{elective.name}</div>
@@ -94,17 +98,19 @@ class EditElectives extends Component {
 
 EditElectives.propTypes = {
   electives: PropTypes.arrayOf(PropTypes.object).isRequired,
-  removeElectives: PropTypes.func.isRequired,
-  saveElective: PropTypes.func.isRequired,
+  deleteElectives: PropTypes.func.isRequired,
+  updateElective: PropTypes.func.isRequired,
+  createElective: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  electives: state.electives,
+  electives: [...state.electives],
 });
 
 const mapDispatchToProps = dispatch => ({
-  removeElectives: ids => dispatch({ type: 'DELETE_ELECTIVES', ids }),
-  saveElective: elective => dispatch({ type: 'UPDATE_ELECTIVE', elective }),
+  deleteElectives: ids => dispatch({ type: 'DELETE_ELECTIVES', ids }),
+  updateElective: elective => dispatch({ type: 'UPDATE_ELECTIVE', elective }),
+  createElective: elective => dispatch({ type: 'CREATE_ELECTIVE', elective }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditElectives);
