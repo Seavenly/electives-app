@@ -1,7 +1,8 @@
 @import "./partials/variables";
 
+@import "./partials/page";
 @import "./partials/admin";
-@import "./partials/electiveCard";
+@import "./partials/elective-card";
 @import "./partials/modal";
 
 * {
@@ -18,59 +19,46 @@ ul {
   list-style: none;
 }
 
-h2 {
-  margin: 2rem 0 1rem;
-  box-shadow: 0 0.2rem 0 0 rgba($colorBlack, 0.15);
-  padding: 0.5rem;
-  background: #f5f5f5;
-  color: $colorBlack;
-  border-radius: 0.2rem;
-}
-
-.App-header {
+.header {
   background: $colorMain;
   box-shadow: 0 0.2rem 0 0 rgba($colorMain, 0.5);
   position: relative;
   z-index: 2;
-
-  .container {
+  &__container {
+    @include container;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-
-  h1 {
+  &__title {
     margin: 0;
     text-transform: uppercase;
     font-size: 1.4rem;
   }
-
-  a {
+  &__home-link {
     text-decoration: none;
     color: white;
     display:block;
     padding: 0.5rem;
   }
-
-  ul {
-    display: flex;
-
-    li {
-      margin: 0 0.2rem;
-    }
-
-    a {
-      background: lighten($colorMain, 20%);
-      border-radius: 0.2rem;
-
-      &:hover {
-        background: lighten($colorMain, 40%);
-      }
-    }
-  }
 }
 
-.container {
-  max-width: 60rem;
-  margin: auto;
+.main-nav {
+  &__items {
+    display: flex;
+  }
+  &__item {
+    margin: 0 0.2rem;
+  }
+  &__link {
+    text-decoration: none;
+    color: white;
+    display:block;
+    padding: 0.5rem;
+    background: lighten($colorMain, 20%);
+    border-radius: 0.2rem;
+    &:hover {
+      background: lighten($colorMain, 40%);
+    }
+  }
 }

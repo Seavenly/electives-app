@@ -63,19 +63,29 @@ class EditElectives extends Component {
     const { electives } = this.props;
 
     return (
-      <div className="view--editElectives">
-        <h2>Edit Electives</h2>
-        <div className="edit-table">
-          <div className="controls">
-            <button onClick={() => this.openModal('elective')}>Add</button>
-            <button onClick={() => this.openModal('message')}>Remove</button>
+      <div className="admin-page admin-page--electives">
+        <h2 className="admin-page__title">Edit Electives</h2>
+        <div className="admin-table">
+          <div className="admin-table__controls">
+            <button onClick={() => this.openModal('elective')} className="admin-table__btn">Add</button>
+            <button onClick={() => this.openModal('message')} className="admin-table__btn">Remove</button>
           </div>
-          <div className="items">
+          <div className="admin-table__rows">
             {electives.sort((a, b) => a.name > b.name).map(elective => (
-              <div key={elective.id} className={`item ${this.state.form[elective.id] ? 'checked' : ''}`}>
-                <div className="c1"><input type="checkbox" value={elective.id} checked={this.state.form[elective.id]} onChange={this.handleInputChange} /></div>
-                <div className="c2">{elective.name}</div>
-                <div className="c3"><button onClick={() => this.setElective(elective) || this.openModal('elective')}>Edit</button></div>
+              <div key={elective.id} className={`admin-table__row ${this.state.form[elective.id] ? 'admin-table__row--checked' : ''}`}>
+                <div className="admin-table__col">
+                  <input
+                    type="checkbox"
+                    value={elective.id}
+                    checked={this.state.form[elective.id]}
+                    onChange={this.handleInputChange}
+                    className="admin-table__checkbox"
+                  />
+                </div>
+                <div className="admin-table__col">{elective.name}</div>
+                <div className="admin-table__col">
+                  <button onClick={() => this.setElective(elective) || this.openModal('elective')} className="admin-table__btn">Edit</button>
+                </div>
               </div>
             ))}
           </div>

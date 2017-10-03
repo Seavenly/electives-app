@@ -1,2 +1,7 @@
 $colorMain: #2980b9;
 $colorBlack: #2d2d2d;
+
+@mixin container {
+  max-width: 60rem;
+  margin: auto;
+}

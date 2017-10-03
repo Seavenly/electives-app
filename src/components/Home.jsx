@@ -1,9 +1,9 @@
 import React from 'react';
 
 const Home = () => (
-  <div className="view--home">
-    <div className="container">
-      <h2>Home Page</h2>
+  <div className="page page--home">
+    <div className="page__container">
+      <h2 className="page__title">Home Page</h2>
     </div>
   </div>
 );

@@ -1,25 +1,58 @@
+.page__container {
+  max-width: 60rem;
+  margin: auto; }
+
+.page__title {
+  margin: 2rem 0 1rem;
+  box-shadow: 0 0.2rem 0 0 rgba(45, 45, 45, 0.15);
+  padding: 0.5rem;
+  background: #f5f5f5;
+  color: #2d2d2d;
+  border-radius: 0.2rem; }
+
+.page__items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; }
+
+.page__item {
+  flex: 0 0 calc(50% - 0.5rem);
+  margin: 0.5rem 0; }
+
 .admin-panel {
   background: #eee; }
-  .admin-panel ul {
+  .admin-panel__container {
+    max-width: 60rem;
+    margin: auto; }
+  .admin-panel__nav-items {
     display: flex;
     justify-content: flex-end; }
-  .admin-panel li {
+  .admin-panel__nav-item {
     margin: 0 0.2rem; }
-  .admin-panel a {
+  .admin-panel__link {
     text-decoration: none;
     color: #555;
     display: block;
     padding: 0.5rem; }
-    .admin-panel a:hover {
+    .admin-panel__link:hover {
       background: #bbb;
       color: white; }
 
-.edit-table .controls {
-  margin-bottom: 0.5rem; }
-  .edit-table .controls button {
-    margin-right: 0.5rem; }
+.admin-page__title {
+  margin: 2rem 0 1rem;
+  box-shadow: 0 0.2rem 0 0 rgba(45, 45, 45, 0.15);
+  padding: 0.5rem;
+  background: #f5f5f5;
+  color: #2d2d2d;
+  border-radius: 0.2rem; }
 
-.edit-table .item {
+.admin-table__controls {
+  margin-bottom: 0.5rem; }
+
+.admin-table__btn {
+  margin-right: 0.5rem; }
+
+.admin-table__row {
   display: flex;
   margin: 0.1rem 0;
   align-items: center;
@@ -28,27 +61,22 @@
   padding: 0.5rem 1rem;
   color: #2d2d2d;
   border-radius: 0.2rem; }
-  .edit-table .item:hover {
+  .admin-table__row:hover {
     background: #eee; }
-  .edit-table .item.checked {
+  .admin-table__row--checked {
     background: #ef5350;
     color: white; }
-    .edit-table .item.checked:hover {
+    .admin-table__row--checked:hover {
       background: #e53935; }
-  .edit-table .item .c1 {
-    flex: 1 1 5%; }
-  .edit-table .item .c2 {
-    flex: 1 1 85%; }
-  .edit-table .item .c3 {
-    flex: 1 1 10%; }
 
-.view--electives ul {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between; }
-  .view--electives ul li {
-    flex: 0 0 calc(50% - 0.5rem);
-    margin: 0.5rem 0; }
+.admin-table__col:nth-child(1) {
+  flex: 1 1 5%; }
+
+.admin-table__col:nth-child(2) {
+  flex: 1 1 85%; }
+
+.admin-table__col:nth-child(3) {
+  flex: 1 1 10%; }
 
 .card {
   display: flex;
@@ -56,98 +84,106 @@
   box-shadow: 0 0.2rem 0 0 #ddd;
   background: #f5f5f5;
   overflow: hidden; }
-  .card .image {
+  .card__image-wrapper {
     width: 30%;
     position: relative;
     overflow: hidden; }
-    .card .image::after {
+    .card__image-wrapper::after {
       content: '';
       display: block;
       padding: 50%; }
-    .card .image img {
-      position: absolute;
-      width: auto;
-      height: 100%;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%); }
-  .card .info {
+  .card__image {
+    position: absolute;
+    width: auto;
+    height: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%); }
+  .card__info {
     padding: 2rem; }
 
-.modal-wrapper {
-  position: fixed;
-  z-index: 100;
-  background: rgba(0, 0, 0, 0.7);
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: none; }
-  .modal-wrapper .modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 0.2rem;
+  overflow: hidden; }
+  .modal__wrapper {
+    position: fixed;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.7);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none; }
+  .modal__header {
+    background: #2980b9;
+    color: white;
+    padding: 0.5rem 1rem; }
+  .modal__content {
+    padding: 1rem; }
+  .modal__controls {
+    text-align: right;
+    padding: 0 1rem 1rem; }
+  .modal__btn {
+    display: inline-block;
+    margin-left: 0.5rem;
+    background: #2980b9;
+    color: white;
+    border: none;
     border-radius: 0.2rem;
-    overflow: hidden; }
-    .modal-wrapper .modal button {
-      display: inline-block;
-      margin-left: 0.5rem;
-      background: #2980b9;
-      color: white;
-      border: none;
-      border-radius: 0.2rem;
-      padding: 0.5rem 1rem; }
-      .modal-wrapper .modal button:hover {
-        cursor: pointer;
-        background: #6ab0de; }
-      .modal-wrapper .modal button.warning {
-        background: #f44336; }
-        .modal-wrapper .modal button.warning:hover {
-          background: #f77066; }
-    .modal-wrapper .modal .header {
-      background: #2980b9;
-      color: white;
-      padding: 0.5rem 1rem; }
-    .modal-wrapper .modal .content {
-      padding: 1rem; }
-    .modal-wrapper .modal .controls {
-      text-align: right;
-      padding: 0 1rem 1rem; }
-  .modal-wrapper.active {
-    display: block; }
-  .modal-wrapper.fade-enter {
-    opacity: 0;
-    transition: opacity 0.3s; }
-    .modal-wrapper.fade-enter .modal {
-      transform: translate(-50%, -250%);
-      transition: transform 0.3s; }
-    .modal-wrapper.fade-enter.fade-enter-active {
-      opacity: 1; }
-      .modal-wrapper.fade-enter.fade-enter-active .modal {
-        transform: translate(-50%, -50%); }
-  .modal-wrapper.fade-exit {
-    opacity: 1;
-    transition: opacity 0.3s; }
-    .modal-wrapper.fade-exit .modal {
-      transform: translate(-50%, -50%);
-      transition: transform 0.3s; }
-    .modal-wrapper.fade-exit.fade-exit-active {
-      opacity: 0; }
-      .modal-wrapper.fade-exit.fade-exit-active .modal {
-        transform: translate(-50%, -250%); }
+    padding: 0.5rem 1rem; }
+    .modal__btn:hover {
+      cursor: pointer;
+      background: #6ab0de; }
+    .modal__btn--warning {
+      background: #f44336; }
+      .modal__btn--warning:hover {
+        background: #f77066; }
 
-.modal-body .form-control {
+.modal__wrapper--active {
+  display: block; }
+
+.modal__wrapper--enter {
+  opacity: 0;
+  transition: opacity 0.3s; }
+  .modal__wrapper--enter .modal {
+    transform: translate(-50%, -250%);
+    transition: transform 0.3s; }
+
+.modal__wrapper--enter-active {
+  opacity: 1; }
+  .modal__wrapper--enter-active .modal {
+    transform: translate(-50%, -50%); }
+
+.modal__wrapper--exit {
+  opacity: 1;
+  transition: opacity 0.3s; }
+  .modal__wrapper--exit .modal {
+    transform: translate(-50%, -50%);
+    transition: transform 0.3s; }
+
+.modal__wrapper--exit-active {
+  opacity: 0; }
+  .modal__wrapper--exit-active .modal {
+    transform: translate(-50%, -250%); }
+
+.m-form__group {
   padding: 0.5rem; }
-  .modal-body .form-control textarea {
-    display: block;
-    width: 100%;
-    height: 6rem; }
-  .modal-body .form-control label {
-    margin-right: 0.5rem; }
-  .modal-body .form-control input[type=checkbox] {
-    margin-right: 0.5rem; }
+
+.m-form__label {
+  margin-right: 0.5rem; }
+
+.m-form__control[type=checkbox] {
+  margin-right: 0.5rem; }
+
+.m-form__control[type=textarea] {
+  display: block;
+  width: 100%;
+  height: 6rem; }
 
 * {
   margin: 0;
@@ -160,42 +196,39 @@ img {
 ul {
   list-style: none; }
 
-h2 {
-  margin: 2rem 0 1rem;
-  box-shadow: 0 0.2rem 0 0 rgba(45, 45, 45, 0.15);
-  padding: 0.5rem;
-  background: #f5f5f5;
-  color: #2d2d2d;
-  border-radius: 0.2rem; }
-
-.App-header {
+.header {
   background: #2980b9;
   box-shadow: 0 0.2rem 0 0 rgba(41, 128, 185, 0.5);
   position: relative;
   z-index: 2; }
-  .App-header .container {
+  .header__container {
+    max-width: 60rem;
+    margin: auto;
     display: flex;
     justify-content: space-between;
     align-items: center; }
-  .App-header h1 {
+  .header__title {
     margin: 0;
     text-transform: uppercase;
     font-size: 1.4rem; }
-  .App-header a {
+  .header__home-link {
     text-decoration: none;
     color: white;
     display: block;
     padding: 0.5rem; }
-  .App-header ul {
-    display: flex; }
-    .App-header ul li {
-      margin: 0 0.2rem; }
-    .App-header ul a {
-      background: #6ab0de;
-      border-radius: 0.2rem; }
-      .App-header ul a:hover {
-        background: #bedcf0; }
 
-.container {
-  max-width: 60rem;
-  margin: auto; }
+.main-nav__items {
+  display: flex; }
+
+.main-nav__item {
+  margin: 0 0.2rem; }
+
+.main-nav__link {
+  text-decoration: none;
+  color: white;
+  display: block;
+  padding: 0.5rem;
+  background: #6ab0de;
+  border-radius: 0.2rem; }
+  .main-nav__link:hover {
+    background: #bedcf0; }

@@ -1,0 +1,28 @@
+.elective-card {
+  display: flex;
+  border-radius: 0.2rem;
+  box-shadow: 0 0.2rem 0 0 #ddd;
+  background: #f5f5f5;
+  overflow: hidden;
+  &__image-wrapper {
+    width: 30%;
+    position: relative;
+    overflow: hidden;
+    &::after {
+      content: '';
+      display: block;
+      padding: 50%;
+    }
+  }
+  &__image {
+    position: absolute;
+    width: auto;
+    height: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  &__info {
+    padding: 2rem
+  }
+}

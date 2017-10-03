@@ -1,20 +1,20 @@
 .admin-panel {
   background: #eee;
-  ul {
+  &__container {
+    @include container();
+  }
+  &__nav-items {
     display: flex;
     justify-content: flex-end;
   }
-
-  li {
+  &__nav-item {
     margin: 0 0.2rem;
   }
-
-  a {
+  &__link {
     text-decoration: none;
     color: #555;
     display: block;
     padding: 0.5rem;
-
     &:hover {
       background: #bbb;
       color: white;
@@ -22,15 +22,25 @@
   }
 }
 
-.edit-table {
-  .controls {
-    margin-bottom: 0.5rem;
-
-    button {
-      margin-right: 0.5rem;
-    }
+.admin-page {
+  &__title {
+    margin: 2rem 0 1rem;
+    box-shadow: 0 0.2rem 0 0 rgba($colorBlack, 0.15);
+    padding: 0.5rem;
+    background: #f5f5f5;
+    color: $colorBlack;
+    border-radius: 0.2rem;
   }
-  .item {
+}
+
+.admin-table {
+  &__controls {
+    margin-bottom: 0.5rem;
+  }
+  &__btn {
+    margin-right: 0.5rem;
+  }
+  &__row {
     display: flex;
     margin: 0.1rem 0;
     align-items: center;
@@ -39,20 +49,20 @@
     padding: 0.5rem 1rem;
     color: $colorBlack;
     border-radius: 0.2rem;
-
     &:hover {
       background: #eee;
     }
-    &.checked {
+    &--checked {
       background: #ef5350;
       color: white;
       &:hover {
         background: #e53935;
       }
     }
-
-    .c1 { flex: 1 1 5%; }
-    .c2 { flex: 1 1 85%; }
-    .c3 { flex: 1 1 10%; }
+  }
+  &__col {
+    &:nth-child(1) { flex: 1 1 5%; }
+    &:nth-child(2) { flex: 1 1 85%; }
+    &:nth-child(3) { flex: 1 1 10%; }
   }
 }

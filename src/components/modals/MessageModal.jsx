@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 
 
 const MessageModal = ({ onClose }) => (
-  <div className="modal-body modal-body--message">
-    <div className="header">
-      <h3>Warning</h3>
+  <div className="modal__body modal__body--message">
+    <div className="modal__header">
+      <h3 className="modal__title">Warning</h3>
     </div>
-    <div className="content">
+    <div className="modal__content">
       <p>Are you sure you want to delete the selected items?</p>
     </div>
-    <div className="controls">
-      <button className="warning" onClick={() => onClose(true)}>Yes</button>
-      <button onClick={() => onClose()}>No</button>
+    <div className="modal__controls">
+      <button onClick={() => onClose(true)} className="modal__btn modal__btn--warning">Yes</button>
+      <button onClick={() => onClose()} className="modal__btn">No</button>
     </div>
   </div>
 );

@@ -7,7 +7,7 @@ import ElectiveModal from './ElectiveModal';
 
 
 function toggleModalActive(modal) {
-  modal.classList.toggle('active');
+  modal.classList.toggle('modal__wrapper--active');
 }
 
 class Modal extends Component {
@@ -40,8 +40,14 @@ class Modal extends Component {
     const { isOpen, onClose, type, data } = this.props;
 
     return (
-      <CSSTransition in={isOpen} timeout={500} classNames="fade" onEnter={toggleModalActive} onExited={toggleModalActive}>
-        <div className="modal-wrapper" ref={this.setWrapperRef}>
+      <CSSTransition
+        in={isOpen}
+        timeout={500}
+        classNames="modal__wrapper-"
+        onEnter={toggleModalActive}
+        onExited={toggleModalActive}
+      >
+        <div className="modal__wrapper" ref={this.setWrapperRef}>
           <div className="modal" role="dialog">
             {(() => {
               switch (type) {

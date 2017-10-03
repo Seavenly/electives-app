@@ -5,12 +5,12 @@ import { connect } from 'react-redux';
 import ElectiveCard from './ElectiveCard';
 
 const Electives = ({ electives }) => (
-  <div className="view--electives">
-    <div className="container">
-      <h2>Electives</h2>
-      <ul>
+  <div className="page page--electives">
+    <div className="page__container">
+      <h2 className="page__title">Electives</h2>
+      <ul className="page__items">
         {electives.sort((a, b) => a.name > b.name).map(elective => (
-          <li key={elective.id}><ElectiveCard elective={elective} /></li>
+          <li key={elective.id} className="page__item"><ElectiveCard elective={elective} /></li>
         ))}
       </ul>
     </div>

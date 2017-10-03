@@ -13,20 +13,22 @@ import './App.css';
 const App = () => (
   <Provider store={store}>
     <Router>
-      <div className="App">
-        <header className="App-header">
-          <div className="container">
-            <Link to="/"><h1>Electives App</h1></Link>
-            <nav>
-              <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/electives">Electives</Link></li>
-                <li><Link to="/admin">Admin</Link></li>
+      <div className="app">
+        <header className="header">
+          <div className="header__container">
+            <Link to="/" className="header__home-link">
+              <h1 className="header__title">Electives App</h1>
+            </Link>
+            <nav className="main-nav">
+              <ul className="main-nav__items">
+                <li className="main-nav__item"><Link to="/" className="main-nav__link">Home</Link></li>
+                <li className="main-nav__item"><Link to="/electives" className="main-nav__link">Electives</Link></li>
+                <li className="main-nav__item"><Link to="/admin" className="main-nav__link">Admin</Link></li>
               </ul>
             </nav>
           </div>
         </header>
-        <main>
+        <main className="main">
           <Switch>
             <Route exact path="/" component={Home} />
             <Route path="/electives" component={Electives} />

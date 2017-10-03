@@ -96,50 +96,64 @@ class ElectiveModal extends Component {
     const { elective, onClose } = this.props;
 
     return (
-      <div className="modal-body modal-body--elective">
-        <div className="header">
-          <h3>{elective.name || 'New Elective'}</h3>
+      <div className="modal__body modal__body--elective">
+        <div className="modal__header">
+          <h3 className="modal__title">{elective.name || 'New Elective'}</h3>
         </div>
-        <div className="content">
-          <form onSubmit={this.handleSubmit}>
-            <div className="form-control">
-              <label htmlFor="name">Name:</label>
-              <input type="text" name="name" value={this.state.elective.name} onChange={this.onInputChange} />
+        <div className="modal__content">
+          <form onSubmit={this.handleSubmit} className="m-form">
+            <div className="m-form__group">
+              <label htmlFor="m-name" className="m-form__label">Name:</label>
+              <input id="m-name" type="text" name="name" value={this.state.elective.name} onChange={this.onInputChange} className="m-form__control" />
             </div>
-            <div className="form-control">
-              <label htmlFor="available">Quarters:</label>
-              <label htmlFor="available-1">1 <input type="checkbox" name="available-1" checked={this.isChecked('available', 1)} onChange={this.onInputChange} /></label>
-              <label htmlFor="available-2">2 <input type="checkbox" name="available-2" checked={this.isChecked('available', 2)} onChange={this.onInputChange} /></label>
-              <label htmlFor="available-3">3 <input type="checkbox" name="available-3" checked={this.isChecked('available', 3)} onChange={this.onInputChange} /></label>
-              <label htmlFor="available-4">4 <input type="checkbox" name="available-4" checked={this.isChecked('available', 4)} onChange={this.onInputChange} /></label>
+            <div className="m-form__group">
+              <label htmlFor="m-available" className="m-form__label">Quarters:</label>
+              <label htmlFor="m-available-1" className="m-form__label">
+                1 <input id="m-available-1" type="checkbox" name="available-1" checked={this.isChecked('available', 1)} onChange={this.onInputChange} className="m-form__control" />
+              </label>
+              <label htmlFor="m-available-2" className="m-form__label">
+                2 <input id="m-available-2" type="checkbox" name="available-2" checked={this.isChecked('available', 2)} onChange={this.onInputChange} className="m-form__control" />
+              </label>
+              <label htmlFor="m-available-3" className="m-form__label">
+                3 <input id="m-available-3" type="checkbox" name="available-3" checked={this.isChecked('available', 3)} onChange={this.onInputChange} className="m-form__control" />
+              </label>
+              <label htmlFor="m-available-4" className="m-form__label">
+                4 <input id="m-available-4" type="checkbox" name="available-4" checked={this.isChecked('available', 4)} onChange={this.onInputChange} className="m-form__control" />
+              </label>
             </div>
-            <div className="form-control">
-              <label htmlFor="grades">Grades:</label>
-              <label htmlFor="grades-6">6 <input type="checkbox" name="grades-6" checked={this.isChecked('grades', 6)} onChange={this.onInputChange} /></label>
-              <label htmlFor="grades-7">7 <input type="checkbox" name="grades-7" checked={this.isChecked('grades', 7)} onChange={this.onInputChange} /></label>
-              <label htmlFor="grades-8">8 <input type="checkbox" name="grades-8" checked={this.isChecked('grades', 8)} onChange={this.onInputChange} /></label>
+            <div className="m-form__group">
+              <label htmlFor="m-grades" className="m-form__label">Grades:</label>
+              <label htmlFor="m-grades-6" className="m-form__label">
+                6 <input id="m-grades-6" type="checkbox" name="grades-6" checked={this.isChecked('grades', 6)} onChange={this.onInputChange} className="m-form__control" />
+              </label>
+              <label htmlFor="m-grades-7" className="m-form__label">
+                7 <input id="m-grades-7" type="checkbox" name="grades-7" checked={this.isChecked('grades', 7)} onChange={this.onInputChange} className="m-form__control" />
+              </label>
+              <label htmlFor="m-grades-8" className="m-form__label">
+                8 <input id="m-grades-8" type="checkbox" name="grades-8" checked={this.isChecked('grades', 8)} onChange={this.onInputChange} className="m-form__control" />
+              </label>
             </div>
-            <div className="form-control">
-              <label htmlFor="cap">Cap:</label>
-              <input type="number" name="cap" value={this.state.elective.cap} onChange={this.onInputChange} />
+            <div className="m-form__group">
+              <label htmlFor="m-cap" className="m-form__label">Cap:</label>
+              <input id="m-cap" type="number" name="cap" value={this.state.elective.cap} onChange={this.onInputChange} className="m-form__control" />
             </div>
-            <div className="form-control">
-              <label htmlFor="semester">Semester:</label>
-              <input type="checkbox" name="semester" checked={this.state.elective.semester} onChange={this.onInputChange} />
+            <div className="m-form__group">
+              <label htmlFor="m-semester" className="m-form__label">Semester:</label>
+              <input id="m-semester" type="checkbox" name="semester" checked={this.state.elective.semester} onChange={this.onInputChange} className="m-form__control" />
             </div>
-            <div className="form-control">
-              <label htmlFor="required">Required:</label>
-              <input type="checkbox" name="required" checked={this.state.elective.required} onChange={this.onInputChange} />
+            <div className="m-form__group">
+              <label htmlFor="m-required" className="m-form__label">Required:</label>
+              <input id="m-required" type="checkbox" name="required" checked={this.state.elective.required} onChange={this.onInputChange} className="m-form__control" />
             </div>
-            <div className="form-control">
-              <label htmlFor="description">Description:</label>
-              <textarea name="description" value={this.state.elective.description} onChange={this.onInputChange} />
+            <div className="m-form__group">
+              <label htmlFor="m-description" className="m-form__label">Description:</label>
+              <textarea id="m-description" name="description" type="textarea" value={this.state.elective.description} onChange={this.onInputChange} className="m-form__control" />
             </div>
           </form>
         </div>
-        <div className="controls">
-          <button className="warning" onClick={() => onClose(true, { elective: this.state.elective })}>Save</button>
-          <button onClick={() => onClose()}>Close</button>
+        <div className="modal__controls">
+          <button onClick={() => onClose(true, { elective: this.state.elective })} className="modal__btn modal__btn--warning">Save</button>
+          <button onClick={() => onClose()} className="modal__btn">Close</button>
         </div>
       </div>
     );
