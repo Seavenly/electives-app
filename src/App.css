@@ -78,47 +78,47 @@
 .admin-table__col:nth-child(3) {
   flex: 1 1 10%; }
 
-.card {
+.elective-card {
   display: flex;
   border-radius: 0.2rem;
   box-shadow: 0 0.2rem 0 0 #ddd;
   background: #f5f5f5;
   overflow: hidden; }
-  .card__image-wrapper {
+  .elective-card__image-wrapper {
     width: 30%;
     position: relative;
     overflow: hidden; }
-    .card__image-wrapper::after {
+    .elective-card__image-wrapper::after {
       content: '';
       display: block;
       padding: 50%; }
-  .card__image {
+  .elective-card__image {
     position: absolute;
     width: auto;
     height: 100%;
     top: 0;
     left: 50%;
     transform: translateX(-50%); }
-  .card__info {
+  .elective-card__info {
     padding: 2rem; }
 
 .modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  border-radius: 0.2rem;
-  overflow: hidden; }
-  .modal__wrapper {
-    position: fixed;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.7);
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: none; }
+  position: fixed;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.7);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none; }
+  .modal__container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 0.2rem;
+    overflow: hidden; }
   .modal__header {
     background: #2980b9;
     color: white;
@@ -144,32 +144,32 @@
       .modal__btn--warning:hover {
         background: #f77066; }
 
-.modal__wrapper--active {
+.modal--active {
   display: block; }
 
-.modal__wrapper--enter {
+.modal--enter {
   opacity: 0;
-  transition: opacity 0.3s; }
-  .modal__wrapper--enter .modal {
-    transform: translate(-50%, -250%);
-    transition: transform 0.3s; }
+  transition: opacity 0.5s; }
+  .modal--enter .modal__container {
+    transform: translate(-50%, calc(-50% - 12rem));
+    transition: transform 0.5s; }
 
-.modal__wrapper--enter-active {
+.modal--enter-active {
   opacity: 1; }
-  .modal__wrapper--enter-active .modal {
+  .modal--enter-active .modal__container {
     transform: translate(-50%, -50%); }
 
-.modal__wrapper--exit {
+.modal--exit {
   opacity: 1;
-  transition: opacity 0.3s; }
-  .modal__wrapper--exit .modal {
+  transition: opacity 0.5s; }
+  .modal--exit .modal__container {
     transform: translate(-50%, -50%);
-    transition: transform 0.3s; }
+    transition: transform 0.5s; }
 
-.modal__wrapper--exit-active {
+.modal--exit-active {
   opacity: 0; }
-  .modal__wrapper--exit-active .modal {
-    transform: translate(-50%, -250%); }
+  .modal--exit-active .modal__container {
+    transform: translate(-50%, calc(-50% - 12rem)); }
 
 .m-form__group {
   padding: 0.5rem; }

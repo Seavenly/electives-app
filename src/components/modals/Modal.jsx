@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
@@ -7,7 +8,7 @@ import ElectiveModal from './ElectiveModal';
 
 
 function toggleModalActive(modal) {
-  modal.classList.toggle('modal__wrapper--active');
+  modal.classList.toggle('modal--active');
 }
 
 class Modal extends Component {
@@ -31,7 +32,7 @@ class Modal extends Component {
   }
 
   handleClickOutside(e) {
-    if (e.target === this.wrapperRef) {
+    if (e.button === 2 && e.target === this.wrapperRef) {
       this.props.onClose();
     }
   }
@@ -39,16 +40,16 @@ class Modal extends Component {
   render() {
     const { isOpen, onClose, type, data } = this.props;
 
-    return (
+    return ReactDOM.createPortal((
       <CSSTransition
         in={isOpen}
         timeout={500}
-        classNames="modal__wrapper-"
+        classNames="modal-"
         onEnter={toggleModalActive}
         onExited={toggleModalActive}
       >
-        <div className="modal__wrapper" ref={this.setWrapperRef}>
-          <div className="modal" role="dialog">
+        <div className={`modal modal--${type}`} ref={this.setWrapperRef}>
+          <div className="modal__container" role="dialog">
             {(() => {
               switch (type) {
                 case 'message':
@@ -62,7 +63,7 @@ class Modal extends Component {
           </div>
         </div>
       </CSSTransition>
-    );
+    ), document.body);
   }
 }
 

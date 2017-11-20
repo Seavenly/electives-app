@@ -96,7 +96,7 @@ class ElectiveModal extends Component {
     const { elective, onClose } = this.props;
 
     return (
-      <div className="modal__body modal__body--elective">
+      <div className="modal__body">
         <div className="modal__header">
           <h3 className="modal__title">{elective.name || 'New Elective'}</h3>
         </div>
