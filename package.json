@@ -5,9 +5,10 @@
   "main": "elecsh.js",
   "scripts": {
     "dev": "nodemon ./server/index.js",
-    "electives:run": "node --harmony elecsh.js run",
-    "electives:users": "node elecsh.js setup-users",
-    "electives:reset": "node elecsh.js reset-electives",
+    "electives:run": "node --harmony ./dist/tools.bundle.js run",
+    "electives:users": "node ./dist/tools.bundle.js setup-users",
+    "electives:reset": "node ./dist/tools.bundle.js reset-electives",
+    "build:server": "webpack",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
@@ -42,6 +43,10 @@
     "uniqid": "^4.1.1"
   },
   "devDependencies": {
+    "@types/express": "^4.0.39",
+    "@types/lodash": "^4.14.85",
+    "@types/mongoose": "^4.7.27",
+    "@types/node": "^8.0.53",
     "babel-eslint": "^8.0.2",
     "eslint": "^4.11.0",
     "eslint-config-airbnb": "^16.1.0",
@@ -52,6 +57,13 @@
     "eslint-plugin-react": "^7.4.0",
     "node-sass": "^4.6.1",
     "nodemon": "^1.12.1",
-    "prettier": "^1.8.2"
+    "prettier": "^1.8.2",
+    "ts-loader": "^3.1.1",
+    "tslint": "^5.8.0",
+    "tslint-config-airbnb": "^5.4.2",
+    "tslint-config-prettier": "^1.6.0",
+    "typescript": "^2.6.1",
+    "webpack": "^3.8.1",
+    "webpack-node-externals": "^1.6.0"
   }
 }
