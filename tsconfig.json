@@ -2,16 +2,19 @@
   "compilerOptions": {
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "module": "commonjs",
+    "strict": true,
+    "module": "es2015",
     "moduleResolution": "node",
-    "target": "es2015",
-    "lib": ["es2017"],
+    "target": "esnext",
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*", "server/types/*"]
     }
+  },
+  "awesomeTypescriptLoaderOptions": {
+    "useBabel": true,
+    "useCache": true
   },
   "include": ["server/**/*"]
 }

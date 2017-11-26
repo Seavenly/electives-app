@@ -7,7 +7,9 @@ const common = {
     extensions: ['.ts', '.tsx', '.js'],
   },
   module: {
-    rules: [{ test: /\.tsx?$/, use: 'ts-loader' }],
+    rules: [
+      { test: /\.tsx?$/, use: ['babel-loader', 'awesome-typescript-loader'] },
+    ],
   },
   externals: [nodeExternals()],
 };
