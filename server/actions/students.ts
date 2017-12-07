@@ -1,20 +1,20 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id", "_group", "_user"] }] */
 
-const mongoose = require('mongoose');
-const User = require('../models/user');
-const Student = require('../models/student');
-const generatePassword = require('password-generator');
+import mongoose from 'mongoose';
+import User, { IBasicUserInfo } from '../models/User';
+import Student from '../models/Student';
+import { generatePassword } from './actions';
 
 /**
  * Create user and student accounts
  * @param {array} studentsArray - Array of student objects
  * @returns {Promise} promise returns Populated Users
  */
-function createAll(studentsArray) {
+async function createAll(studentsArray: IBasicUserInfo[]) {
   const promises = [];
   const users = [];
 
-  studentsArray.forEach((userData) => {
+  studentsArray.forEach(userData => {
     const newUserId = mongoose.Types.ObjectId();
     const newStudentId = mongoose.Types.ObjectId();
     const newUser = new User({
@@ -32,14 +32,17 @@ function createAll(studentsArray) {
       _id: newStudentId,
       _user: newUserId,
       grade: userData.grade,
-      authPassword: generatePassword(3, false),
+      authPassword: generatePassword(3),
     });
 
     const p1 = newStudent.save();
-    const p2 = User.findOne({ username: newUser.username }).exec()
-      .then((user) => {
+    const p2 = User.findOne({ username: newUser.username })
+      .exec()
+      .then(user => {
         if (user) {
-          newUser.username = (userData.name.first.substr(0, 2) + userData.name.last).toLowerCase();
+          newUser.username = (
+            userData.name.first.substr(0, 2) + userData.name.last
+          ).toLowerCase();
         }
         return newUser.save();
       })
@@ -47,14 +50,14 @@ function createAll(studentsArray) {
 
     promises.push(p1, p2);
   });
-  return Promise.all(promises).then(() => User.populate(users, { path: 'data' }));
+  return Promise.all(promises).then(() =>
+    User.populate(users, { path: 'data' }),
+  );
 }
-
 
 // User.populate(data[0], { path: 'data' }).then((popUser) => {
 //           students.push(popUser);
 //         });
-
 
 // function create() {
 //     const newUser = new User({

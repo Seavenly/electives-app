@@ -2,10 +2,14 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 import { IElective } from './Elective';
 
 export interface IElectiveGroup extends Document {
+  /** Name for this grouping of electives */
   name: string;
+  /** Description of what the grouped electives have in common */
   description: string;
+  /** How many electives from this group can a student have */
   limit: number;
-  electives: mongoose.Types.ObjectId[] | IElective[];
+  /** Reference to electives in this group */
+  electives: mongoose.Types.ObjectId[];
 }
 
 const ElectiveGroupSchema: Schema = new Schema({

@@ -1,20 +1,24 @@
-export enum Log {
-  Info = 'INFO',
-  Grade = 'GRADE',
-  Filled = 'FILLED',
-  Semi = 'SEMI',
-  Full = 'FULL',
-  Limit = 'LIMIT',
-  TCCFull = 'TCC-FULL',
-  Success = 'SUCCESS',
-  Remove = 'REMOVE',
-  Head = 'HEAD',
-  Error = 'ERROR',
+export const enum Log {
+  INFO = 'INFO',
+  GRADE = 'GRADE',
+  FILLED = 'FILLED',
+  SEMI = 'SEMI',
+  FULL = 'FULL',
+  LIMIT = 'LIMIT',
+  TCC_FULL = 'TCC_FULL',
+  SUCCESS = 'SUCCESS',
+  REMOVE = 'REMOVE',
+  HEAD = 'HEAD',
+  ERROR = 'ERROR',
+  TEXT = 'TEXT',
 }
 
+export type Logs = [string, string][];
+export type Errors = string[];
+
 class Logger {
-  private logs: [string, string][];
-  private errors: string[];
+  private logs: Logs;
+  private errors: Errors;
 
   constructor() {
     this.logs = [];
@@ -22,7 +26,7 @@ class Logger {
   }
 
   /** Send a message to log */
-  public log(type: Log = Log.Info, message: string): void {
+  public log(type: Log = Log.INFO, message: string): void {
     this.logs.push([type, message]);
     if (type === 'ERROR') {
       this.errors.push(message);
@@ -30,18 +34,18 @@ class Logger {
   }
 
   /** Return the current log */
-  public getLog(): [string, string][] {
+  public getLog(): Logs {
     return this.logs;
   }
 
   /** Return all recorded errors from the log */
-  public getErrors(): string[] {
+  public getErrors(): Errors {
     return this.errors;
   }
 
   /** Send an error message to the log */
   public error(message: string): void {
-    this.log(Log.Error, message);
+    this.log(Log.ERROR, message);
   }
 
   /** Clear the log */

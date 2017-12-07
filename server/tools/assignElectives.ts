@@ -1,10 +1,9 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id", "_group"] }] */
 
-import * as _ from 'lodash';
-import mongoose from 'mongoose';
+import mongoose, { Promise } from 'mongoose';
 import Student, { IStudent, IList } from '../models/Student';
 import Elective, { IElective } from '../models/Elective';
-import logger, { Log } from './logger';
+import logger, { Log, Logs, Errors } from './logger';
 
 interface IPassableData {
   electives: IElective[];
@@ -12,10 +11,10 @@ interface IPassableData {
 }
 
 export enum Cycle {
-  Required,
-  TopChoice,
-  Fill,
-  Fix,
+  REQUIRED,
+  TOP_CHOICE,
+  FILL,
+  FIX,
 }
 
 /**
@@ -34,7 +33,10 @@ async function initialSetup(): Promise<IPassableData> {
     .sort('-grade submit')
     .populate('_user')
     .exec();
-  const [electives, students] = await Promise.all([electivesP, studentsP]);
+  const [electives, students]: [IElective[], IStudent[]] = await Promise.all([
+    electivesP,
+    studentsP,
+  ]);
   electives.forEach((elective: IElective) => {
     elective.quartersdata = [
       {
@@ -60,7 +62,8 @@ async function initialSetup(): Promise<IPassableData> {
     ];
   });
   students.forEach((student: IStudent) => {
-    student.electives = [null, null, null, null];
+    student.electives = [];
+    student.electives.length = 4;
   });
   return { electives, students };
 }
@@ -70,23 +73,20 @@ async function initialSetup(): Promise<IPassableData> {
  * Force fills required electives for 8th graders
  */
 function requiredCycle({ electives, students }: IPassableData): IPassableData {
-  logger.log(Log.Head, 'REQUIRED CYCLE');
-  const requiredElectives: IElective[] = _.filter(
-    electives,
+  logger.log(Log.HEAD, 'REQUIRED CYCLE');
+  const requiredElectives: IElective[] = electives.filter(
     (elective: IElective) => elective.required,
   );
   if (!requiredElectives.length) {
-    logger.log(Log.Info, 'There are no required electives');
+    logger.log(Log.INFO, 'There are no required electives');
   }
-  const grade8Students: IStudent[] = _.filter(
-    students,
+  const grade8Students: IStudent[] = students.filter(
     (student: IStudent) => student.grade === 8,
   );
   Object.values(grade8Students).forEach(student => {
-    const missing: IElective[] = _.filter(
-      requiredElectives,
+    const missing: IElective[] = requiredElectives.filter(
       (elective: IElective) =>
-        !_.find(student.required, n => n.equals(elective._id)),
+        !student.required.find(n => n.equals(elective._id)),
     );
     student.fillElectives(missing);
   });
@@ -94,27 +94,26 @@ function requiredCycle({ electives, students }: IPassableData): IPassableData {
 }
 
 /**
- * First Choice
+ * Top Choice
  * Atempt to give each student his/her first choice by grade/submit date
  */
 function topChoiceCycle({ electives, students }: IPassableData): IPassableData {
-  logger.log(Log.Head, 'TOP CHOICE CYCLE');
+  logger.log(Log.HEAD, 'TOP CHOICE CYCLE');
   Object.values(students).forEach(student => {
     const studentList: IList = student.get('list', Object);
     // Log the top choice for each quarter for current student iteration
     logger.log(
-      Log.Info,
+      Log.INFO,
       `(${student.grade}) ${student.fullName()} wants: ${Object.values(
-        _.mapValues(
-          studentList,
-          (quarterList: mongoose.Types.ObjectId[]) =>
-            _.find(
-              electives,
-              (elective: IElective) =>
-                elective.id === quarterList[0].toString(),
-            ).name,
-        ),
-      ).join(', ')}`,
+        studentList,
+      )
+        .map(quarterList => {
+          const elective = electives.find(
+            elec => elec.id === quarterList[0].toHexString(),
+          );
+          return elective !== undefined ? elective.name : '';
+        })
+        .join(', ')}`,
     );
 
     Object.keys(studentList)
@@ -122,12 +121,18 @@ function topChoiceCycle({ electives, students }: IPassableData): IPassableData {
       // instead of maxing out the first 2 quarters
       .sort(() => 0.5 - Math.random())
       .forEach((quarter: string) => {
-        const elective: IElective = _.find(
-          electives,
+        const elective: IElective | undefined = electives.find(
           (elec: IElective) => elec.id === student.list[quarter][0].toString(),
         );
         const index: number = +quarter[1] - 1;
-        student.setElective(elective, index, 'TCC');
+        if (elective === undefined) {
+          throw new Error(
+            `The student, ${student.fullName()}, has an invalid elective ID for quarter ${
+              quarter
+            } in the first slot`,
+          );
+        }
+        student.setElective(elective, index, Cycle.TOP_CHOICE);
       });
   });
 
@@ -139,221 +144,200 @@ function topChoiceCycle({ electives, students }: IPassableData): IPassableData {
  * Fill remaining spots by grade/submit date
  */
 function fillCycle({ electives, students }: IPassableData): IPassableData {
-  logger.log(Log.Head, 'FILL CYCLE');
+  logger.log(Log.HEAD, 'FILL CYCLE');
   Object.values(students).forEach(student => {
-    if (student.electives.includes(null)) {
+    if (student.electives.includes(undefined)) {
       logger.log(
-        Log.Info,
+        Log.INFO,
         `(${student.grade}) ${student.fullName()}: Filling electives`,
       );
-    }
-    student.electives.forEach(
-      (electiveId: mongoose.Types.ObjectId, index: number) => {
-        if (!electiveId) {
-          Object.keys(student.list[`q${index + 1}`].toObject()).some(j => {
-            const elective = _.find(
-              electives,
-              elec => elec.id === student.list[`q${index + 1}`][j].toString(),
-            );
-            return student.setElective(elective, index, 'FC');
+      student.electives.forEach((electiveId, index) => {
+        if (electiveId === undefined) {
+          student.list[`q${index + 1}`].some((id: mongoose.Types.ObjectId) => {
+            const elective = electives.find(elec => elec.id === id.toString());
+            if (elective === undefined) {
+              throw new Error(
+                `${student.fullName()}'s list for quarter ${index +
+                  1} has an invalid elective ID that does not map to an actual elective.`,
+              );
+            }
+            return student.setElective(elective, index, Cycle.FILL);
           });
         }
-      },
-    );
+      });
+    }
   });
 
-  return data;
+  return { electives, students };
 }
 
 /**
  * Fix Cycle
  * Attempt to fix potential errors
- * @param {object} data - Data passed from Promise chain
- * @returns {object} data modified through function
  */
-function fixCycle(data) {
-  logger.log('HEAD', 'FIX CYCLE');
-  const electives = data[0];
-  const students = data[1];
+function fixCycle({ electives, students }: IPassableData): IPassableData {
+  logger.log(Log.HEAD, 'FIX CYCLE');
   students.forEach(student => {
     student.electives.forEach((electiveId, index) => {
       // Attempt to fill an empty Quarter 1 or 3 slot with semester long elective
       if (!electiveId && index % 2 === 0 && student.electives[index + 1]) {
         const removedElective = student.removeElective(index + 1, electives);
-        Object.keys(student.list[`q${index + 1}`].toObject()).some(j => {
-          const elective = _.find(
-            electives,
-            elec => elec.id === student.list[`q${index + 1}`][j].toString(),
-          );
-          return student.setElective(elective, index, 'FIX');
+        student.list[`q${index + 1}`].some((id: mongoose.Types.ObjectId) => {
+          const elective = electives.find(elec => elec.id === id.toString());
+          if (elective === undefined) {
+            throw new Error(
+              `${student.fullName()}'s list for quarter ${index +
+                1} has an invalid elective ID that does not map to an actual elective.`,
+            );
+          }
+          return student.setElective(elective, index, Cycle.FIX);
         });
-        student.setElective(removedElective, index + 1, 'FIX');
+        if (removedElective !== undefined) {
+          student.setElective(removedElective, index + 1, Cycle.FIX);
+        }
       }
     });
   });
 
-  return data;
+  return { electives, students };
 }
 
 /**
  * Find errors in assigned electives and report them
- * @param {object} data - Data passed from Promise chain
- * @returns {object} data modified through function
  */
-function findErrors(data) {
-  const students = data[1];
-  const electives = data[0];
+async function findErrors({
+  electives,
+  students,
+}: IPassableData): Promise<IPassableData> {
   students.forEach(student => {
-    student.electives.forEach((elective, index) => {
-      if (!elective)
+    student.electives.forEach((electiveId, index) => {
+      if (electiveId === undefined) {
         logger.error(
           `(${
             student.grade
           }) ${student.fullName()} :: Missing elective for Quarter ${index +
             1}`,
         );
+      }
     });
   });
   electives.forEach(elective => {
     elective.available.forEach(quarter => {
-      if (elective.totalCurrent(+quarter - 1) > elective.cap) {
+      if (elective.totalCurrent(+quarter) > elective.cap) {
         logger.error(
           `${elective.name} (Quarter ${
             quarter
-          }) :: Elective over cap (${elective.totalCurrent(+quarter - 1)} / ${
+          }) :: Elective over cap (${elective.totalCurrent(+quarter)} / ${
             elective.cap
           })`,
         );
       }
     });
   });
-  return Student.find({ submit: null })
-    .exec()
-    .then(stus => {
-      stus.forEach(student => {
-        logger.error(
-          `(${
-            student.grade
-          }) ${student.fullName()} :: Electives have not been submitted`,
-        );
-      });
-
-      return data;
-    });
+  const studentsNoSubmit = await Student.find({ submit: null }).exec();
+  studentsNoSubmit.forEach(student => {
+    logger.error(
+      `(${
+        student.grade
+      }) ${student.fullName()} :: Electives have not been submitted`,
+    );
+  });
+  return { electives, students };
 }
 
 /**
  * Log each students' assigned electives
- * @param {object} data - Data passed from Promise chain
- * @returns {object} data modified through function
  */
-function logSummary(data) {
-  const electives = data[0];
-  const students = data[1];
-  logger.log('HEAD', 'ELECTIVE SUMMARY');
+function logSummary({ electives, students }: IPassableData): IPassableData {
+  logger.log(Log.HEAD, 'ELECTIVE SUMMARY');
   electives.forEach(elective => {
     elective.available.forEach(avail => {
       logger.log(
-        'INFO',
+        Log.INFO,
         `${elective.name} (Quarter ${avail}): ${
           elective.quartersdata[avail - 1].students.length
         } of ${elective.cap}`,
       );
       logger.log(
-        'TEXT',
+        Log.TEXT,
         `${elective.name} (Quarter ${avail}): ${elective.quartersdata[
           avail - 1
         ].names.join(', ')}`,
       );
     });
   });
-  logger.log('HEAD', 'STUDENT SUMMARY');
+  logger.log(Log.HEAD, 'STUDENT SUMMARY');
   students.forEach(student => {
     let missing = false;
-    const electivesArr = _.map(student.electives, id => {
-      if (!id) {
+    const electiveNames: string[] = student.electives.map(id => {
+      if (id === undefined) {
         missing = true;
         return '(MISSING)';
       }
-      return _.find(electives, elective => elective.id === id.toString()).name;
+      const elective = electives.find(elec => elec.id === id.toString());
+      if (elective === undefined) {
+        throw new Error(
+          `Log Summary: ${student.fullName()} has an invalid elective ID set.`,
+        );
+      }
+      return elective.name;
     });
     let elecStr = '';
-    electivesArr.forEach((elec, i) => {
+    electiveNames.forEach((elec, i) => {
       elecStr += `Q${i + 1}: ${elec}`;
-      if (i < electivesArr.length - 1) elecStr += ', ';
+      if (i < electiveNames.length - 1) {
+        elecStr += ', ';
+      }
     });
-    if (missing)
+    if (missing) {
       logger.error(`(${student.grade}) ${student.fullName()}: ${elecStr}`);
-    else
+    } else {
       logger.log(
-        'INFO',
+        Log.INFO,
         `(${student.grade}) ${student.fullName()}: ${elecStr}`,
       );
+    }
   });
 
-  return data;
+  return { electives, students };
 }
 
 /**
  * Save all changes to students' electives
- * @param {object} data - Data passed from Promise chain
- * @returns {object} data modified through function
  */
-function save(data) {
-  return new Promise((resolve, reject) => {
-    const electives = data[0];
-    const students = data[1];
-    const total = electives.length + students.length;
-    let count = 0;
-
-    students.forEach(student => {
-      student.save(err => {
-        if (err) {
-          reject(err);
-        }
-        count += 1;
-        if (count >= total) {
-          resolve();
-        }
-      });
-    });
-    electives.forEach(elective => {
-      elective.save(err => {
-        if (err) {
-          reject(err);
-        }
-        count += 1;
-        if (count >= total) {
-          resolve();
-        }
-      });
-    });
-  });
+function save({ electives, students }: IPassableData): Promise<void> {
+  const savedStudents: Promise<IStudent>[] = students.map(student =>
+    student.save(),
+  );
+  const savedElectives: Promise<IElective>[] = electives.map(elective =>
+    elective.save(),
+  );
+  return Promise.all([...savedStudents, ...savedElectives]).catch(
+    (err: string) => {
+      throw new Error(err);
+    },
+  );
 }
 
 /**
  * Assign electives to students based on their desired choices
- * @param {object} req - Request object
- * @param {object} res - Response object
- * @returns {undefined} nothing
  */
-function assignElectives() {
-  return initialSetup()
-    .then(requiredCycle)
-    .then(topChoiceCycle)
-    .then(fillCycle)
-    .then(fixCycle)
-    .then(findErrors)
-    .then(logSummary)
-    .then(save)
-    .then(() => {
-      if (logger.getErrors().length) {
-        logger.log('ERROR', 'Electives calculated WITH ERRORS');
-      } else {
-        logger.log('SUCCESS', 'Electives calculated successfully');
-      }
-      return { log: logger.getLog(), errors: logger.getErrors() };
-    });
+async function assignElectives(): Promise<{ log: Logs; errors: Errors }> {
+  let data: IPassableData = await initialSetup();
+  data = requiredCycle(data);
+  data = topChoiceCycle(data);
+  data = fillCycle(data);
+  data = fixCycle(data);
+  data = await findErrors(data);
+  data = logSummary(data);
+  await save(data);
+
+  if (logger.getErrors().length) {
+    logger.log(Log.ERROR, 'Electives calculated WITH ERRORS');
+  } else {
+    logger.log(Log.SUCCESS, 'Electives calculated successfully');
+  }
+  return { log: logger.getLog(), errors: logger.getErrors() };
 }
 
 export default assignElectives;

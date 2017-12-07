@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
 import mongoose from 'mongoose';
 import Elective, { IElective } from '../models/Elective';
-import ElectiveGroup, { IElectiveGroup } from '../models/ElectiveGroup';
+import ElectiveGroup from '../models/ElectiveGroup';
 
 // Reset electives using data from these files
 import { electivesData, groupsData, IGroupJson } from '../data';
@@ -22,7 +21,7 @@ async function resetElectives(): Promise<IElective[]> {
 /**
  * Setup elective groups and link electives to their groups
  */
-async function setupGroups(elecs: IElective[]): Promise<IElective[]> {
+async function setupGroups(electives: IElective[]): Promise<IElective[]> {
   const groupsWithIds: IGroupJson[] = [];
   const electivesWithGroups: Promise<IElective>[] = [];
 
@@ -31,11 +30,15 @@ async function setupGroups(elecs: IElective[]): Promise<IElective[]> {
     groupsWithIds.push(group);
 
     group.electives.forEach((electiveName, i) => {
-      const elec: IElective = _.find(elecs, { name: electiveName });
-
-      group.electives[i] = elec._id;
-      elec._group = group._id;
-      electivesWithGroups.push(elec.save());
+      const elective: IElective | undefined = electives.find(
+        elec => elec.name === electiveName,
+      );
+      if (elective === undefined) {
+        throw new Error(`Unable to find elective with name ${electiveName}`);
+      }
+      group.electives[i] = elective._id;
+      elective._group = group._id;
+      electivesWithGroups.push(elective.save());
     });
   });
 
