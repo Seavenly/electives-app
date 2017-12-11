@@ -1,23 +1,16 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id", "_group", "_user"] }] */
 
 import mongoose from 'mongoose';
-import User, { IBasicUserInfo } from '../models/User';
-import Student from '../models/Student';
+import User, { IUser, IBasicUserInfo } from '../models/User';
+import Student, { IStudent } from '../models/Student';
 import { generatePassword } from './actions';
 
-/**
- * Create user and student accounts
- * @param {array} studentsArray - Array of student objects
- * @returns {Promise} promise returns Populated Users
- */
-async function createAll(studentsArray: IBasicUserInfo[]) {
-  const promises = [];
-  const users = [];
-
-  studentsArray.forEach(userData => {
-    const newUserId = mongoose.Types.ObjectId();
-    const newStudentId = mongoose.Types.ObjectId();
-    const newUser = new User({
+/** Create user and student accounts */
+async function createAll(studentsArray: IBasicUserInfo[]): Promise<IUser[]> {
+  const promises: Promise<[IStudent, IUser]>[] = studentsArray.map(userData => {
+    const newUserId: mongoose.Types.ObjectId = mongoose.Types.ObjectId();
+    const newStudentId: mongoose.Types.ObjectId = mongoose.Types.ObjectId();
+    const newUser: IUser = new User({
       _id: newUserId,
       name: {
         first: userData.name.first,
@@ -28,31 +21,35 @@ async function createAll(studentsArray: IBasicUserInfo[]) {
       access: 'student',
       data: newStudentId,
     });
-    const newStudent = new Student({
+    const newStudent: IStudent = new Student({
       _id: newStudentId,
       _user: newUserId,
       grade: userData.grade,
       authPassword: generatePassword(3),
     });
 
-    const p1 = newStudent.save();
-    const p2 = User.findOne({ username: newUser.username })
+    const savedStudent: Promise<IStudent> = newStudent.save();
+    const savedUser: Promise<IUser> = User.findOne({
+      username: newUser.username,
+    })
       .exec()
       .then(user => {
-        if (user) {
-          newUser.username = (
-            userData.name.first.substr(0, 2) + userData.name.last
-          ).toLowerCase();
+        // If user with username already exists, create a different username
+        if (user !== null) {
+          newUser.username = `${userData.name.first.slice(0, 2)}${
+            userData.name.last
+          }`.toLowerCase();
         }
         return newUser.save();
-      })
-      .then(saveduser => users.push(saveduser));
+      });
 
-    promises.push(p1, p2);
+    return Promise.all([savedStudent, savedUser]);
   });
-  return Promise.all(promises).then(() =>
-    User.populate(users, { path: 'data' }),
-  );
+
+  const savedArr: [IStudent, IUser][] = await Promise.all(promises);
+  const users: IUser[] = savedArr.map(userTuple => userTuple[1]);
+
+  return User.populate(users, { path: 'data' });
 }
 
 // User.populate(data[0], { path: 'data' }).then((popUser) => {
@@ -186,4 +183,4 @@ async function createAll(studentsArray: IBasicUserInfo[]) {
 // }
 
 // module.exports = { createAll, create, getAll, getOne, update, remove };
-module.exports = { createAll };
+export default { createAll };

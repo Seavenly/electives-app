@@ -2,51 +2,80 @@
 
 import fs from 'fs';
 import csvparse from 'csv-parse';
-import _ from 'lodash';
+import mongoose from 'mongoose';
 
 import actions from '../actions/actions';
-import Elective from '../models/Elective';
-import User, { IBasicUserInfo } from '../models/User';
-import Student from '../models/Student';
+import Elective, { IElective } from '../models/Elective';
+import User, { IUser, IBasicUserInfo } from '../models/User';
+import Student, { IStudent } from '../models/Student';
 
-/**
- * Create elective list for quarter from entry json
- * @param {object} entry - json object
- * @param {object} electives - list of all electives
- * @param {number} quarter - quarter to filter by
- * @returns {array} Elective list in order by elective name
- */
-function extractList(entry, electives, quarter) {
-  return _(entry)
-    .pickBy((value, key) => key.indexOf(`Quarter ${quarter}`) > -1 && value) // Pick keys with quarter in name
-    .toPairs() // Convert key, value to collection of arrays [key, value]
-    .sortBy(0) // Sort array by the 'key'
-    .map(n => {
-      // Replace [key, elective name] name with 'id'
-      const elec = _.find(electives, { name: n[1] });
-      if (!elec) throw new Error(`Elective ID could not be found for ${n[1]}`);
-      if (!elec.available.includes(quarter))
-        throw new Error(`${n[1]} not available in quarter ${quarter}`);
-      return elec._id;
-    })
-    .value(); // Return array of only elective ids
+/** Create elective list for quarter from CSV entry */
+function extractList(
+  entry: ICSVEntry,
+  electives: IElective[],
+  quarter: number,
+): mongoose.Types.ObjectId[] {
+  // Find keys pertaining to specified quarter and sort them
+  const keysForQuarter: string[] = Object.keys(entry)
+    .filter(key => key.indexOf(`Quarter ${quarter}`) > -1)
+    .sort();
+
+  // Find elective ID for each key
+  return keysForQuarter.map(key => {
+    const electiveChoice: IElective | undefined = electives.find(
+      elective => elective.name === entry[key],
+    );
+    if (electiveChoice === undefined) {
+      throw new Error(`Elective could not be found with name ${entry[key]}.`);
+    }
+    if (!electiveChoice.available.includes(quarter)) {
+      throw new Error(`${entry[key]} is not available in quarter ${quarter}.`);
+    }
+    return electiveChoice._id;
+  });
 }
 
 /**
  * Clear User and Student documents
- * @returns {Promise} promise
  */
 function clearAllUsers(): Promise<[void, void]> {
   return Promise.all([User.remove({}).exec(), Student.remove({}).exec()]);
 }
 
 const enum CSVEntryColumn {
+  TIMESTAMP = 'Timestamp',
   NAME = 'Student Name (First and Last)',
   GRADE = 'Student Grade for 2017-2018 School Year',
+  Q1C1 = 'Quarter 1 Choices [Choice 1]',
+  Q1C2 = 'Quarter 1 Choices [Choice 2]',
+  Q1C3 = 'Quarter 1 Choices [Choice 3]',
+  Q2C1 = 'Quarter 2 Choices [Choice 1]',
+  Q2C2 = 'Quarter 2 Choices [Choice 2]',
+  Q2C3 = 'Quarter 2 Choices [Choice 3]',
+  Q3C1 = 'Quarter 3 Choices [Choice 1]',
+  Q3C2 = 'Quarter 3 Choices [Choice 2]',
+  Q3C3 = 'Quarter 3 Choices [Choice 3]',
+  Q4C1 = 'Quarter 4 Choices [Choice 1]',
+  Q4C2 = 'Quarter 4 Choices [Choice 2]',
+  Q4C3 = 'Quarter 4 Choices [Choice 3]',
 }
 interface ICSVEntry {
+  [index: string]: string;
+  Timestamp: string;
   'Student Name (First and Last)': string;
   'Student Grade for 2017-2018 School Year': string;
+  'Quarter 1 Choices [Choice 1]': string;
+  'Quarter 1 Choices [Choice 2]': string;
+  'Quarter 1 Choices [Choice 3]': string;
+  'Quarter 2 Choices [Choice 1]': string;
+  'Quarter 2 Choices [Choice 2]': string;
+  'Quarter 2 Choices [Choice 3]': string;
+  'Quarter 3 Choices [Choice 1]': string;
+  'Quarter 3 Choices [Choice 2]': string;
+  'Quarter 3 Choices [Choice 3]': string;
+  'Quarter 4 Choices [Choice 1]': string;
+  'Quarter 4 Choices [Choice 2]': string;
+  'Quarter 4 Choices [Choice 3]': string;
 }
 /**
  * Convert csv file to array of entry objects
@@ -55,16 +84,16 @@ function csvToCollection(): Promise<ICSVEntry[]> {
   const file = fs.readFileSync('new/data/entries.csv', 'utf8');
   return new Promise((resolve, reject) => {
     csvparse(file, { columns: true }, (err, data) => {
-      if (err) reject('Error parsing entries.csv');
+      if (err) {
+        reject('Error parsing entries.csv');
+      }
       resolve(data);
     });
   });
 }
 
-/**
- * Generate array of users from data json
- */
-async function generateUsers(entries: ICSVEntry[]): Promise<ICSVEntry[]> {
+/** Generate array of basic user info from CSV entries */
+async function generateUsers(entries: ICSVEntry[]): Promise<IUser[]> {
   const users: IBasicUserInfo[] = entries.map((entry, index) => {
     const [firstName, lastName] = entry[CSVEntryColumn.NAME].split(' ');
     const firstNameCapitalized =
@@ -82,8 +111,9 @@ async function generateUsers(entries: ICSVEntry[]): Promise<ICSVEntry[]> {
       )
     ) {
       throw new Error(
-        `Multiple entries for ${firstNameCapitalized} ${lastNameCapitalized} (entry #${index +
-          1})`,
+        `Multiple entries for ${firstNameCapitalized} ${
+          lastNameCapitalized
+        } (entry #${index + 1})`,
       );
     }
     return {
@@ -94,19 +124,13 @@ async function generateUsers(entries: ICSVEntry[]): Promise<ICSVEntry[]> {
       grade: entry[CSVEntryColumn.GRADE],
     };
   });
-  await actions.students.createAll(users);
-  return entries;
+  return actions.students.createAll(users);
 }
 
-/**
- * Fill student elective lists based on json data
- * @param {array} entries - from csvToCollection
- * @returns {Promise} promise
- */
-async function fillElectiveLists(entries: ICSVEntry[]) {
-  const electives = await Elective.find();
-  const updates = [];
-  entries.forEach(entry => {
+/** Fill student elective lists based on json data */
+async function fillElectiveLists(entries: ICSVEntry[]): Promise<IStudent[]> {
+  const electives: IElective[] = await Elective.find();
+  const updates = entries.map(entry => {
     const q1 = extractList(entry, electives, 1);
     const q2 = extractList(entry, electives, 2);
     const q3 = extractList(entry, electives, 3);
@@ -116,28 +140,33 @@ async function fillElectiveLists(entries: ICSVEntry[]) {
       name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
     const lastName =
       name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
-    const p = User.findOne({ name: { first: firstName, last: lastName } })
+    return User.findOne({ name: { first: firstName, last: lastName } })
       .exec()
       .then(user => {
-        if (!user)
+        if (user === null) {
           throw new Error(
             `Unable to find user with name: ${firstName} ${lastName}`,
           );
+        }
         return Student.findOne({ _id: user.data }).exec();
       })
       .then(student => {
-        const s = student;
-        s.list = { q1, q2, q3, q4 };
-        s.submit = new Date(entry.Timestamp);
-        return s.save();
+        if (student === null) {
+          throw new Error(
+            `No student linked to user with name: ${firstName} ${lastName}`,
+          );
+        }
+        student.list = { q1, q2, q3, q4 };
+        student.submit = new Date(entry[CSVEntryColumn.TIMESTAMP]);
+        return student.save();
       });
-    updates.push(p);
   });
   return Promise.all(updates);
 }
 
-module.exports = () =>
-  clearAllUsers()
-    .then(csvToCollection)
-    .then(generateUsers)
-    .then(fillElectiveLists);
+export default async (): Promise<IStudent[]> => {
+  await clearAllUsers();
+  const entries: ICSVEntry[] = await csvToCollection();
+  await generateUsers(entries);
+  return fillElectiveLists(entries);
+};

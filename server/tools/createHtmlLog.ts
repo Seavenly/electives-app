@@ -1,9 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 let body = '';
-const style =
-`<style>
+const style = `<style>
   * {
     margin: 0;
     padding: 0;
@@ -91,7 +90,7 @@ const style =
   div.top a { color: white; }
 </style>`;
 
-module.exports = (log) => {
+module.exports = log => {
   let links = '';
 
   log.forEach((line, index) => {
@@ -100,20 +99,29 @@ module.exports = (log) => {
 
     if (line[0] === 'HEAD') {
       id = line[1].replace(/ /g, '-').toLowerCase();
-      links += `<li><a href="#${id}">${line[1].toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}</a></li>`;
+      links += `<li><a href="#${id}">${line[1]
+        .toLowerCase()
+        .replace(/\b\w/g, l => l.toUpperCase())}</a></li>`;
       id = `<div id="${id}" class="anchor"></div>`;
       message = `=== ${message} ===`;
     }
     body += `<li class="${line[0].toLowerCase()}">`;
     if (id) body += id;
-    body += `<span class="c1">${index + 1}</span><span class="c2">${line[0]}</span><span class="c3">${message}</span></li>\n`;
+    body += `<span class="c1">${index + 1}</span><span class="c2">${
+      line[0]
+    }</span><span class="c3">${message}</span></li>\n`;
   });
 
-  const listjs = fs.readFileSync(path.resolve('node_modules/list.js/dist/list.min.js'));
+  const listjs = fs.readFileSync(
+    path.resolve('node_modules/list.js/dist/list.min.js'),
+  );
   const d = new Date();
   const dparts = d.toDateString().split(' ');
-  fs.writeFileSync(`${process.env.HOME}/electives_log_${dparts[3].slice(2)}${dparts[1]}${dparts[2]}.html`,
-  `<!DOCTYPE html>
+  fs.writeFileSync(
+    `${process.env.HOME}/electives_log_${dparts[3].slice(2)}${dparts[1]}${
+      dparts[2]
+    }.html`,
+    `<!DOCTYPE html>
     <html lang="en">
       <head>
         <title>Electives Log</title>
@@ -150,6 +158,6 @@ module.exports = (log) => {
           });
         </script>
       </body>
-    </html>`);
+    </html>`,
+  );
 };
-

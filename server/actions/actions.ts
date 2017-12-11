@@ -1,5 +1,6 @@
 import students from './students';
 
+/** Generate a random password of specified length */
 export function generatePassword(length: number = 12): string {
   const charset =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
