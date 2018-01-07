@@ -11,12 +11,17 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*", "server/types/*"]
+      "*": [
+        "node_modules/*",
+        "typings/*"
+      ]
     }
   },
   "awesomeTypescriptLoaderOptions": {
     "useBabel": true,
     "useCache": true
   },
-  "include": ["server/**/*"]
+  "include": [
+    "server/**/*"
+  ]
 }

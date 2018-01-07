@@ -1,8 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 
-let body = '';
-const style = `<style>
+import { Logs, Log } from './logger';
+
+let body: string = '';
+const style: string = `<style>
   * {
     margin: 0;
     padding: 0;
@@ -90,37 +92,46 @@ const style = `<style>
   div.top a { color: white; }
 </style>`;
 
-module.exports = log => {
-  let links = '';
+export default (logs: Logs): void => {
+  let links: string = '';
 
-  log.forEach((line, index) => {
-    let id = '';
-    let message = line[1];
+  logs.forEach((line, index) => {
+    let anchor: string = '';
+    const [type, message]: [string, string] = line;
 
-    if (line[0] === 'HEAD') {
-      id = line[1].replace(/ /g, '-').toLowerCase();
-      links += `<li><a href="#${id}">${line[1]
-        .toLowerCase()
-        .replace(/\b\w/g, l => l.toUpperCase())}</a></li>`;
-      id = `<div id="${id}" class="anchor"></div>`;
-      message = `=== ${message} ===`;
+    if (type === Log.HEAD) {
+      const id = message.replace(/ /g, '-').toLowerCase();
+      links += `
+        <li>
+          <a href="#${id}">
+            ${message.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+          </a>
+        </li>
+      `;
+      anchor = `<div id="${id}" class="anchor"></div>`;
     }
-    body += `<li class="${line[0].toLowerCase()}">`;
-    if (id) body += id;
-    body += `<span class="c1">${index + 1}</span><span class="c2">${
-      line[0]
-    }</span><span class="c3">${message}</span></li>\n`;
+    body += `
+      <li class="${type.toLowerCase()}">
+        ${anchor}
+        <span class="c1">
+          ${index + 1}
+        </span>
+        <span class="c2">
+          ${type}
+        </span>
+        <span class="c3">${
+          type === Log.HEAD ? `=== ${message} ===` : message
+        }</span>
+      </li>
+    `;
   });
 
-  const listjs = fs.readFileSync(
+  const listjs: Buffer = fs.readFileSync(
     path.resolve('node_modules/list.js/dist/list.min.js'),
   );
-  const d = new Date();
-  const dparts = d.toDateString().split(' ');
+  const [, month, day, year]: string[] = new Date().toDateString().split(' ');
   fs.writeFileSync(
-    `${process.env.HOME}/electives_log_${dparts[3].slice(2)}${dparts[1]}${
-      dparts[2]
-    }.html`,
+    `${process.env.HOME}/electives_log_${year.slice(2)}${month}${day}.html`,
     `<!DOCTYPE html>
     <html lang="en">
       <head>
